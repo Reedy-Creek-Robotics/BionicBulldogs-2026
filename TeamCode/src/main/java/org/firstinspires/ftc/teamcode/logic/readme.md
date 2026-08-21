@@ -1,0 +1,1 @@
+This package is for calculations and decisions that can run without hardware
