@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Drivetrain {
     public DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
     public IMU imu;
-
     public void init(HardwareMap hwMap){
         frontLeftMotor = hwMap.get(DcMotor.class, "front_left_motor");
         backLeftMotor = hwMap.get(DcMotor.class, "back_left_motor");
