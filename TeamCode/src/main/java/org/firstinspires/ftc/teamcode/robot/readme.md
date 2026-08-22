@@ -1,0 +1,1 @@
+This package is for classes and functions that initialize subsystems and holds the standard names of parts on the bot 
