@@ -187,7 +187,7 @@ class LocalizationTest extends OpMode {
         telemetryM.debug("y:" + follower.getPose().getY());
         telemetryM.debug("heading:" + follower.getPose().getHeading());
         telemetryM.debug("total heading:" + follower.getTotalHeading());
-        telemetryM.debug("hi");
+        telemetryM.debug("not hi");
         if (debugStringEnabled) {
             telemetryM.debug("Drivetrain Debug String:\n" +
                     follower.getDrivetrain().debugString());
