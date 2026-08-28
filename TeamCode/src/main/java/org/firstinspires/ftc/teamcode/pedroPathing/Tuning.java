@@ -187,7 +187,7 @@ class LocalizationTest extends OpMode {
         telemetryM.debug("y:" + follower.getPose().getY());
         telemetryM.debug("heading:" + follower.getPose().getHeading());
         telemetryM.debug("total heading:" + follower.getTotalHeading());
-        telemetryM.debug("not hi");
+        telemetryM.debug("not hi7");
         if (debugStringEnabled) {
             telemetryM.debug("Drivetrain Debug String:\n" +
                     follower.getDrivetrain().debugString());
@@ -1175,7 +1175,7 @@ class DriveTuner extends OpMode {
  * @version 1.0, 3/12/2024
  */
 class Line extends OpMode {
-    public static double DISTANCE = 40;
+    public static double DISTANCE = 72;
     private boolean forward = true;
 
     private Path forwards;
