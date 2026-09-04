@@ -1739,18 +1739,21 @@ class Drawing {
      */
     public static void drawPath(Path path, Style style) {
         double[][] points = path.getPanelsDrawingPoints();
+        panelsField.setStyle(style);
 
-        for (int i = 0; i < points[0].length; i++) {
+        for (int i = 0; i < (points[0].length - 1); i++) {
             for (int j = 0; j < points.length; j++) {
                 if (Double.isNaN(points[j][i])) {
                     points[j][i] = 0;
                 }
             }
+            panelsField.moveCursor(points[0][i], points[1][i]);
+            panelsField.line(points[0][i+1], points[1][i+1]);
         }
 
-        panelsField.setStyle(style);
-        panelsField.moveCursor(points[0][0], points[0][1]);
-        panelsField.line(points[1][0], points[1][1]);
+        //panelsField.setStyle(style);
+        //panelsField.moveCursor(points[0][0], points[0][1]);
+        //panelsField.line(points[1][0], points[1][1]);
     }
 
     /**
