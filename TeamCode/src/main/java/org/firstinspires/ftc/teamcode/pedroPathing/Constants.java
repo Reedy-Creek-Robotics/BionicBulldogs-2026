@@ -8,7 +8,6 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
-import com.pedropathing.paths.PathChain;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -23,11 +22,10 @@ public class Constants {
             .forwardZeroPowerAcceleration(-29.370172219801333)
             .lateralZeroPowerAcceleration(-70.72396674392799)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.15, 0, 0.03, 0.04))
-            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.4,0,0.001,0.015))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.1,0.0,0.01,0.6,0.2))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025,0.0,0.00001,0.6,0.01))
             .centripetalScaling(0.00075);
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.1, 0.1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
