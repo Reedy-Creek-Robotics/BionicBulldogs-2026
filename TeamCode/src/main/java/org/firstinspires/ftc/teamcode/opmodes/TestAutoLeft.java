@@ -7,12 +7,14 @@ import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.AutoPaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
 @Autonomous(name = "AutoTestLeft", group = "Pedro Pathing")
 public class TestAutoLeft extends AutoPaths {
     @Override
     public void init(){
+        follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(point1A);
         follower.update();
         drawCurrent();
