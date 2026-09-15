@@ -4,12 +4,13 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.pedroPathing.AutoPaths;
 
 @Configurable
-@TeleOp(name = "AutoTestLeft", group = "Pedro Pathing")
-class TestAutoLeft extends AutoPaths {
+@Autonomous(name = "AutoTestLeft", group = "Pedro Pathing")
+public class TestAutoLeft extends AutoPaths {
     @Override
     public void init(){
         follower.setStartingPose(point1A);
