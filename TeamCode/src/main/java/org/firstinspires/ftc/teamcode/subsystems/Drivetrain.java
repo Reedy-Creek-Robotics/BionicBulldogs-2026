@@ -13,10 +13,10 @@ public class Drivetrain {
     public IMU imu;
 
     public void init(HardwareMap hwMap){
-        frontLeftMotor = hwMap.get(DcMotor.class, "front_left_motor");
-        backLeftMotor = hwMap.get(DcMotor.class, "back_left_motor");
-        frontRightMotor = hwMap.get(DcMotor.class, "front_right_motor");
-        backRightMotor = hwMap.get(DcMotor.class, "back_right_motor");
+        frontLeftMotor = hwMap.get(DcMotor.class, "frontLeft");
+        backLeftMotor = hwMap.get(DcMotor.class, "backLeft");
+        frontRightMotor = hwMap.get(DcMotor.class, "frontRight");
+        backRightMotor = hwMap.get(DcMotor.class, "backRight");
 
         DcMotor.ZeroPowerBehavior breakBehavior = DcMotor.ZeroPowerBehavior.BRAKE;
         frontLeftMotor.setZeroPowerBehavior(breakBehavior);
@@ -28,8 +28,8 @@ public class Drivetrain {
         backRightMotor.setZeroPowerBehavior(breakBehavior);
         backRightMotor.setPower(0.0);
 
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -39,7 +39,7 @@ public class Drivetrain {
         imu = hwMap.get(IMU.class, "imu");
 
         RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
         );
 
@@ -48,8 +48,8 @@ public class Drivetrain {
 
     public void drive(double forward, double strafe, double rotate) {
         double frontLeftPower = forward + strafe + rotate;
-        double backLeftPower = forward - strafe + rotate;
         double frontRightPower = forward - strafe - rotate;
+        double backLeftPower = forward - strafe + rotate;
         double backRightPower = forward + strafe - rotate;
 
         double maxPower = 1.0;

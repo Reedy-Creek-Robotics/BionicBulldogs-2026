@@ -15,7 +15,7 @@ public class DriveTrainTest extends OpMode {
 
     public void loop() {
         double leftStickX = -gamepad1.left_stick_x;
-        double leftStickY = -gamepad1.left_stick_y;
+        double leftStickY = gamepad1.left_stick_y;
         double rightStickX = gamepad1.right_stick_x;
 
         drivetrain.driveFieldRelative(leftStickX, leftStickY, rightStickX);
