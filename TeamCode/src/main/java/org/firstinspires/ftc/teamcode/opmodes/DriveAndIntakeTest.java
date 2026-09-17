@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-@TeleOp(name = "DriveTrainTest")
+@TeleOp(name = "DriveAndIntakeTest")
 public class DriveAndIntakeTest extends OpMode {
     Drivetrain drivetrain;
     Intake intake;
@@ -26,8 +26,8 @@ public class DriveAndIntakeTest extends OpMode {
 
     protected void processDriving() {
         double leftStickX = -gamepad1.left_stick_x;
-        double leftStickY = -gamepad1.left_stick_y;
-        double rightStickX = gamepad1.right_stick_x;
+        double leftStickY = gamepad1.left_stick_y;
+        double rightStickX = -gamepad1.right_stick_x;
 
         drivetrain.driveFieldRelative(leftStickY, leftStickX, rightStickX);
     }

@@ -39,14 +39,16 @@ public class Intake {
     }
 
     protected void forward() {
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        // motor is facing left so clockwise is reverse
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeMotor.setPower(1.0);
         currentState = MotorState.FORWARD;
     }
 
     protected void reverse() {
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeMotor.setPower(-1.0);
+        // motor is facing left so counter clockwise is forward
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setPower(1.0);
         currentState = MotorState.REVERSE;
     }
 
