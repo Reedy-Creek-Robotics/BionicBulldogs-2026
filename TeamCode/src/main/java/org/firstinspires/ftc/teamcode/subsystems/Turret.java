@@ -15,16 +15,35 @@ public class Turret {
     private static final double TICKS_PER_MOTOR_REV = 1993.6;
     private static final double motorPower = 1;
     private Follower follower;
+    private hiveSet hivePositions;
 
-    public void initialize(HardwareMap hwMap){
-        follower = Constants.createFollower(hwMap);
+    public record hiveSet(Pose upperHive, Pose lowerHive) {}
+
+    // TODO: see if this should be put somewhere else for more general use
+    public enum teamColor{
+        redTeam,
+        blueTeam
+    }
+
+    public void initialize(HardwareMap hwMap, teamColor currentTeam){
+        follower = Constants.createFollower(hwMap); //TODO: move to opmode init
         turretDriveMotor = hwMap.get(DcMotor.class, "TurretDriveMotor");
         turretDriveMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretDriveMotor.setPower(0.0);
         turretDriveMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         turretDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         currentAngle = turretDriveMotor.getCurrentPosition();
+        if(currentTeam == teamColor.blueTeam){
+            hivePositions = hiveSet(new Pose (30,30), new Pose (30,114)); // TODO: set actual positions 
+        } else {
+            hivePositions = hiveSet(new Pose (114,30), new Pose (114,114)); // TODO: set actual positions 
+        }
     }
+
+    public void updateAim(){
+        moveToAngle(findAngleToPoint(pickAimPose()));
+    }
+
 
     private double findAngleToPoint(Pose goalPoint){
         Pose botPos = follower.getPose();
@@ -32,7 +51,14 @@ public class Turret {
         return angleToAim;
     }
 
-    public void updateCurrentAngle(){
+    private Pose pickAimPose(){
+        if(follower.getPose.gety > 72){
+            return hivePositions.upperHive;
+        }
+        return hivePositions.lowerHive;
+    }
+
+    private  void updateCurrentAngle(){
         currentAngle = turretDriveMotor.getCurrentPosition();
     }
 
