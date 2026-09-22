@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -18,6 +19,7 @@ public class TurretTestRedWithDrive extends OpMode{
 
     public void init(){
         follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(new Pose(7.75, 7.75, 0));
         turret = new Turret();
         turret.initialize(hardwareMap ,Turret.teamColor.redTeam, follower);
         drivetrain = new Drivetrain();

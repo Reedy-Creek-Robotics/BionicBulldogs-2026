@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -14,6 +15,7 @@ public class DriveTrainTestWithPedro extends OpMode {
     DrivetrainWithPedro drivetrain;
     public void init() {
         follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(new Pose(7.75, 7.75, 0));
         drivetrain = new DrivetrainWithPedro();
         drivetrain.init(hardwareMap, follower);
     }

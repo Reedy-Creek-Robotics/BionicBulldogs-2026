@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.FieldComponentsPose;
 
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ public class Turret {
     private Follower follower;
     public List<Pose> hivePositions = new ArrayList<Pose>();
     public FieldComponentsPose fieldComponents;
+    public int acceptableTickError = 10;
 
 
     // TODO: see if this should be put somewhere else for more general use
@@ -40,19 +40,21 @@ public class Turret {
         turretDriveMotor = hwMap.get(DcMotor.class, "TurretDriveMotor");
         turretDriveMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretDriveMotor.setPower(0.0);
-        turretDriveMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        turretDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turretDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretDriveMotor.setTargetPosition(turretDriveMotor.getCurrentPosition());
+        turretDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turretDriveMotor.setPower(motorPower);
         currentAngle = turretDriveMotor.getCurrentPosition();
         hivePositions = fieldComponents.getHivesPose(currentTeam);
     }
 
-    private double findAngleToPoint(Pose goalPoint){
+    public double findAngleToPoint(Pose goalPoint){
         Pose botPos = follower.getPose();
-        double angleToAim = (Math.toDegrees(Math.atan((botPos.getY() - goalPoint.getX()) / (botPos.getX() - goalPoint.getX())))) - botPos.getHeading();
+        double angleToAim = (Math.toDegrees(Math.atan((botPos.getY() - goalPoint.getY()) / (botPos.getX() - goalPoint.getX())))) - botPos.getHeading();
         return angleToAim;
     }
 
-    private Pose pickAimPose(){
+    public Pose pickAimPose(){
         if(follower.getPose().getY() > 72){
             return hivePositions.get(0);
         }
@@ -70,15 +72,18 @@ public class Turret {
         return turretState.idle;
     }
 
-    public void moveToAngle(double angleGoal){
+    public int moveToAngle(double angleGoal){
         updateCurrentAngle();
-        int targetTicks = (int) Math.round(((angleGoal / 360.0) - (currentAngle / TICKS_PER_MOTOR_REV)) * TICKS_PER_MOTOR_REV * gearRatio);
-        turretDriveMotor.setTargetPosition(targetTicks);
-        turretDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION); //TODO: see if this can be done in init
-        turretDriveMotor.setPower(motorPower);
+        int targetTicks = (int) Math.round(((angleGoal / 360.0)) * TICKS_PER_MOTOR_REV * gearRatio);
+        if (Math.abs(targetTicks - turretDriveMotor.getTargetPosition()) > acceptableTickError) {
+            turretDriveMotor.setTargetPosition(targetTicks);
+        }
+        return targetTicks;
     }
 
-    public void updateLoop(){
-        moveToAngle(findAngleToPoint(pickAimPose()));
+    public int updateLoop(){
+        double aimAngle = findAngleToPoint(pickAimPose());
+        int tickGoal = moveToAngle(aimAngle);
+        return tickGoal;
     }
 }
