@@ -34,9 +34,9 @@ public class Turret {
         idle
     }
 
-    public void initialize(HardwareMap hwMap, teamColor currentTeam){
+    public void initialize(HardwareMap hwMap, teamColor currentTeam, Follower passedFollower){
         fieldComponents = new FieldComponentsPose();
-        follower = Constants.createFollower(hwMap); //TODO: move to opmode init
+        follower = passedFollower;
         turretDriveMotor = hwMap.get(DcMotor.class, "TurretDriveMotor");
         turretDriveMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretDriveMotor.setPower(0.0);
@@ -45,11 +45,6 @@ public class Turret {
         currentAngle = turretDriveMotor.getCurrentPosition();
         hivePositions = fieldComponents.getHivesPose(currentTeam);
     }
-
-    public void updateAim(){
-        moveToAngle(findAngleToPoint(pickAimPose()));
-    }
-
 
     private double findAngleToPoint(Pose goalPoint){
         Pose botPos = follower.getPose();
