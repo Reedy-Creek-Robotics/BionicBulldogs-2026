@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.FieldComponentsPose;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Turret {
     public static final double gearRatio = 208.0 / 60.0;
@@ -15,9 +19,9 @@ public class Turret {
     private static final double TICKS_PER_MOTOR_REV = 1993.6;
     private static final double motorPower = 1;
     private Follower follower;
-    private hiveSet hivePositions;
+    public List<Pose> hivePositions = new ArrayList<Pose>();
+    public FieldComponentsPose fieldComponents;
 
-    public record hiveSet(Pose upperHive, Pose lowerHive) {}
 
     // TODO: see if this should be put somewhere else for more general use
     public enum teamColor{
@@ -25,7 +29,13 @@ public class Turret {
         blueTeam
     }
 
+    public enum turretState{
+        moving,
+        idle
+    }
+
     public void initialize(HardwareMap hwMap, teamColor currentTeam){
+        fieldComponents = new FieldComponentsPose();
         follower = Constants.createFollower(hwMap); //TODO: move to opmode init
         turretDriveMotor = hwMap.get(DcMotor.class, "TurretDriveMotor");
         turretDriveMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -33,11 +43,7 @@ public class Turret {
         turretDriveMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         turretDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         currentAngle = turretDriveMotor.getCurrentPosition();
-        if(currentTeam == teamColor.blueTeam){
-            hivePositions = hiveSet(new Pose (30,30), new Pose (30,114)); // TODO: set actual positions 
-        } else {
-            hivePositions = hiveSet(new Pose (114,30), new Pose (114,114)); // TODO: set actual positions 
-        }
+        hivePositions = fieldComponents.getHivesPose(currentTeam);
     }
 
     public void updateAim(){
@@ -52,19 +58,14 @@ public class Turret {
     }
 
     private Pose pickAimPose(){
-        if(follower.getPose.gety > 72){
-            return hivePositions.upperHive;
+        if(follower.getPose().getY() > 72){
+            return hivePositions.get(0);
         }
-        return hivePositions.lowerHive;
+        return hivePositions.get(1);
     }
 
     private  void updateCurrentAngle(){
         currentAngle = turretDriveMotor.getCurrentPosition();
-    }
-
-    public enum turretState{
-        moving,
-        idle
     }
 
     public turretState getUpdate(){
@@ -80,5 +81,9 @@ public class Turret {
         turretDriveMotor.setTargetPosition(targetTicks);
         turretDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION); //TODO: see if this can be done in init
         turretDriveMotor.setPower(motorPower);
+    }
+
+    public void updateLoop(){
+        moveToAngle(findAngleToPoint(pickAimPose()));
     }
 }
