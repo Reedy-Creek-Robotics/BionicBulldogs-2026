@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Intake {
     int IntakeState = 2;
@@ -9,29 +11,29 @@ public class Intake {
     int STOP = 2;
     int BACKWARD = 3;
 
-    public DcMotor intakeMotor;
+    public DcMotorEx intakeMotor;
     public void init(HardwareMap hwMap){
-        intakeMotor = hwMap.get(DcMotor.class,"intakeMotor");
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        intakeMotor = hwMap.get(DcMotorEx.class,"intakeMotor");
+        intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         intakeMotor.setPower(0.0);
 
     }
 
     public void setFORWARD() {
-            intakeMotor.setPower(1.0);
-            IntakeState = FORWARD;
+        intakeMotor.setPower(1.0);
+        IntakeState = FORWARD;
 
     }
 
     public void setBACKWARD() {
-            intakeMotor.setPower(-1.0);
-            IntakeState = BACKWARD;
+        intakeMotor.setPower(-1.0);
+        IntakeState = BACKWARD;
 
     }
 
     public void setSTOP() {
-            intakeMotor.setPower(0.0);
-            IntakeState = STOP;
+        intakeMotor.setPower(0.0);
+        IntakeState = STOP;
     }
     public void ToggleForward(){
         if (IntakeState == FORWARD){
@@ -49,5 +51,8 @@ public class Intake {
             setBACKWARD();
         }
     }
-
+    public double getMotorCurrent(){
+        double amps = intakeMotor.getCurrent(CurrentUnit.AMPS);
+        return amps;
+    }
 }
