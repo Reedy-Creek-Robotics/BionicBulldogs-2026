@@ -21,7 +21,7 @@ public class TurretTestRed extends OpMode{
     }
 
     public void loop(){
-        telemetry.addData("Turret:", turret.getUpdate());
+        telemetry.addData("Turret:", turret.getTurretState());
         telemetry.addData("Pose:", follower.getPose());
         Pose aimPose = turret.pickAimPose();
         telemetry.addData("Aim Goal", aimPose);
