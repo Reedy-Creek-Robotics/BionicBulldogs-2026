@@ -8,6 +8,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 @TeleOp(name="IntakeTester")
 public class IntakeTester extends OpMode {
 
+    double avgCurrent;
+    double maxCurrent;
+
     Intake intake;
 
     @Override
@@ -17,9 +20,7 @@ public class IntakeTester extends OpMode {
         telemetry.addLine("Initialized");
     }
 
-    double totalCurrent = 0;
-    double counter = 0;
-    double avgCurrent = 0;
+
     @Override
     public void loop() {
         if(gamepad1.rightBumperWasPressed()){
@@ -28,17 +29,14 @@ public class IntakeTester extends OpMode {
         if(gamepad1.leftBumperWasPressed() ){
             intake.ToggleBackward();
         }
-
-        counter = counter + 1;
-        if (intake.IntakeState != 2) {
-            if (counter % 10 == 0) {
-                totalCurrent = totalCurrent + intake.getMotorCurrent();
-                avgCurrent = totalCurrent / (counter / 10);
-            }
+        if (gamepad1.x) {
+            avgCurrent = intake.getAvgCurrent();
+            maxCurrent = intake.getMaxCurrent();
         }
 
         telemetry.addData("Intake Current", intake.getMotorCurrent());
-        telemetry.addData("Avg Current While On:", avgCurrent);
+        telemetry.addData("Avg Current", avgCurrent);
+        telemetry.addData("Max Current", maxCurrent);
         telemetry.update();
     }
 }
