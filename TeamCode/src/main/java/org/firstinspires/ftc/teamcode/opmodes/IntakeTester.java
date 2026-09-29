@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
+import java.security.KeyStore;
+
 @TeleOp(name="IntakeTester")
 public class IntakeTester extends OpMode {
 
@@ -29,15 +31,16 @@ public class IntakeTester extends OpMode {
             intake.ToggleBackward();
         }
 
-
         counter = counter + 1;
-        if (counter % 10 == 0) {
-            totalCurrent = totalCurrent + intake.getMotorCurrent();
-            avgCurrent = totalCurrent/(counter/10);
+        if (intake.IntakeState == 1) {
+            if (counter % 10 == 0) {
+                totalCurrent = totalCurrent + intake.getMotorCurrent();
+                avgCurrent = totalCurrent / (counter / 10);
+            }
         }
 
         telemetry.addData("Intake Current", intake.getMotorCurrent());
-        telemetry.addData("Avg Current", avgCurrent);
+        telemetry.addData("Avg Current While On:", avgCurrent);
         telemetry.update();
     }
 }
