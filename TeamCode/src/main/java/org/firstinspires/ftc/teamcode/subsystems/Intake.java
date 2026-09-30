@@ -4,11 +4,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
+
+    /*
     int IntakeState = 2;
     int FORWARD = 1;
     int STOP = 2;
     int BACKWARD = 3;
+    */
+    public enum possibleIntakeStates {
+        FORWARD,
+        STOP,
+        BACKWARD
+    }
 
+    possibleIntakeStates IntakeState = possibleIntakeStates.STOP;
     public DcMotor intakeMotor;
     public void init(HardwareMap hwMap){
         intakeMotor = hwMap.get(DcMotor.class,"intakeMotor");
@@ -17,24 +26,26 @@ public class Intake {
 
     }
 
+    public possibleIntakeStates getIntakeState(){
+        return IntakeState;
+    }
+
     public void setFORWARD() {
             intakeMotor.setPower(1.0);
-            IntakeState = FORWARD;
-
+            IntakeState = possibleIntakeStates.FORWARD;
     }
 
     public void setBACKWARD() {
             intakeMotor.setPower(-1.0);
-            IntakeState = BACKWARD;
-
+            IntakeState = possibleIntakeStates.BACKWARD;
     }
 
     public void setSTOP() {
             intakeMotor.setPower(0.0);
-            IntakeState = STOP;
+            IntakeState = possibleIntakeStates.STOP;
     }
     public void ToggleForward(){
-        if (IntakeState == FORWARD){
+        if (IntakeState == possibleIntakeStates.FORWARD){
             setSTOP();
         }
         else{
@@ -42,7 +53,7 @@ public class Intake {
         }
     }
     public void ToggleBackward(){
-        if (IntakeState == BACKWARD){
+        if (IntakeState == possibleIntakeStates.BACKWARD){
             setSTOP();
         }
         else {
