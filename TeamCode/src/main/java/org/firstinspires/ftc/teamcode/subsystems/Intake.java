@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Intake {
 
@@ -10,20 +13,17 @@ public class Intake {
     int FORWARD = 1;
     int STOP = 2;
     int BACKWARD = 3;
-    */
-    public enum possibleIntakeStates {
-        FORWARD,
-        STOP,
-        BACKWARD
-    }
+    double totalCurrent = 0;
+    double counter = 0;
+    double avgCurrent = 0;
+    double maxCurrent = 0;
 
-    possibleIntakeStates IntakeState = possibleIntakeStates.STOP;
-    public DcMotor intakeMotor;
+
+    public DcMotorEx intakeMotor;
     public void init(HardwareMap hwMap){
-        intakeMotor = hwMap.get(DcMotor.class,"intakeMotor");
+        intakeMotor = hwMap.get(DcMotorEx.class,"intakeMotor");
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeMotor.setPower(0.0);
-
     }
 
     public possibleIntakeStates getIntakeState(){
@@ -31,18 +31,19 @@ public class Intake {
     }
 
     public void setFORWARD() {
-            intakeMotor.setPower(1.0);
-            IntakeState = possibleIntakeStates.FORWARD;
+        intakeMotor.setPower(1.0);
+        IntakeState = FORWARD;
     }
 
     public void setBACKWARD() {
-            intakeMotor.setPower(-1.0);
-            IntakeState = possibleIntakeStates.BACKWARD;
+        intakeMotor.setPower(-1.0);
+        IntakeState = BACKWARD;
+
     }
 
     public void setSTOP() {
-            intakeMotor.setPower(0.0);
-            IntakeState = possibleIntakeStates.STOP;
+        intakeMotor.setPower(0.0);
+        IntakeState = STOP;
     }
     public void ToggleForward(){
         if (IntakeState == possibleIntakeStates.FORWARD){
@@ -60,5 +61,25 @@ public class Intake {
             setBACKWARD();
         }
     }
+    public double getMotorCurrent(){
+        return intakeMotor.getCurrent(CurrentUnit.AMPS);
+    }
 
+    public double getAvgCurrent() {
+        counter = counter + 1;
+        if (IntakeState != 2) {
+            if (counter % 10 == 0) {
+                totalCurrent = totalCurrent + getMotorCurrent();
+                avgCurrent = totalCurrent / (counter / 10);
+            }
+        }
+        return avgCurrent;
+    }
+
+    public double getMaxCurrent() {
+        if (getMotorCurrent() > maxCurrent) {
+            maxCurrent = getMotorCurrent();
+        }
+        return maxCurrent;
+    }
 }
