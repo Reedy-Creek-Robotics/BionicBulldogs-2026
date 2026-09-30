@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -14,16 +15,13 @@ public class Intake {
     double counter = 0;
     double avgCurrent = 0;
     double maxCurrent = 0;
-    double maxCurrentSameState = 0;
-    double prevIntakeState = 0;
 
 
     public DcMotorEx intakeMotor;
     public void init(HardwareMap hwMap){
         intakeMotor = hwMap.get(DcMotorEx.class,"intakeMotor");
-        intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeMotor.setPower(0.0);
-        prevIntakeState = IntakeState;
     }
 
     public void setFORWARD() {
