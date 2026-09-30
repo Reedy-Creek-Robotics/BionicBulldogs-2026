@@ -11,12 +11,15 @@ public class Shooter {
     public void initialize(HardwareMap hwMap){
         shooterDriveMotor = hwMap.get(DcMotorEx.class, "shooterDriveMotor");
         shooterDriveMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        shooterDriveMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         shooterDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterDriveMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         shooterDriveMotor.setVelocity(0.0);
     }
     public void setVel(double requestedPower){
         shooterDriveMotor.setVelocity(requestedPower);
     }
 
+    public double getMotorVelocity(){
+        return shooterDriveMotor.getVelocity();
+    }
 }

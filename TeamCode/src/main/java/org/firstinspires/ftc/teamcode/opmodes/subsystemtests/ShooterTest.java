@@ -18,14 +18,15 @@ public class ShooterTest extends OpMode{
 
     public void loop() {
         if(gamepad1.dpadUpWasPressed()) {
-            velocityGoal = velocityGoal + 0.1;
+            velocityGoal = velocityGoal + 150;
         }
         if(gamepad1.dpadDownWasPressed()){
-            velocityGoal = velocityGoal - 0.1;
+            velocityGoal = velocityGoal - 150;
         }
 
-        shooter.setVel(velocityGoal * 1500);
-        telemetry.addData("power:", velocityGoal);
+        shooter.setVel(velocityGoal);
+        telemetry.addData("requested velocity:", velocityGoal);
+        telemetry.addData("current velocity", shooter.getMotorVelocity());
         telemetry.update();
     }
 }
