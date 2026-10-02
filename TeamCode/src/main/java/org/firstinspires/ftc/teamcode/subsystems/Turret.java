@@ -2,14 +2,11 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.FieldComponentsPose;
 
 import java.util.ArrayList;
@@ -48,33 +45,26 @@ public class Turret {
         turretDriveMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretDriveMotor.setTargetPosition(turretDriveMotor.getCurrentPosition());
         turretDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turretDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         turretDriveMotor.setPower(motorPower);
 
         currentMotorTicks = turretDriveMotor.getCurrentPosition();
         hivePositions = fieldComponents.getHivesPose(currentTeam);
     }
 
-    //public int findQuadrantAdditive(Pose bot, Pose goal){
-    //    if(bot.getX() >= goal.getX() && bot.getY() >= goal.getY()){
-    //        return 0;
-    //    }
-    //    if (bot.getX() < goal.getX() && bot.getY() >= goal.getY()) {
-    //        return 90;
-    //    }
-    //    if (bot.getX() <= goal.getX() && bot.getY() < goal.getY()) {
-    //        return 180;
-    //    }
-    //    return 270;
-    //}
 
-    //public double findAngleToPoint(Pose goalPoint){
-    //    Pose botPos = follower.getPose();
-    //    int quadrantAdditive = findQuadrantAdditive(botPos, goalPoint);
-    //    double angleToAim = Math.abs(Math.toDegrees(Math.atan((botPos.getY() - goalPoint.getY()) / (botPos.getX() - goalPoint.getX())))) - Math.toDegrees(botPos.getHeading()) + quadrantAdditive;
-    //    return angleToAim;
-    //}
+    public double findAngleToPoint(Pose goalPoint){
+        Pose botPos = follower.getPose();
+        double deltaX = goalPoint.getX() - botPos.getX(); //inches
+        double deltaY = goalPoint.getY() - botPos.getY(); //inches
+        double fieldRelativeAngle = Math.atan2(deltaY, deltaX);
+        double botRelitiveAngle = botPos.getHeading() - fieldRelativeAngle;
+        //double angleToAim = Math.abs(Math.toDegrees(Math.atan((botPos.getY() - goalPoint.getY()) / (botPos.getX() - goalPoint.getX())))) - Math.toDegrees(botPos.getHeading()) + quadrantAdditive;
+        return botRelitiveAngle;
+    }
 
     // thx gpt
+    /*
     public double findAngleToPoint(Pose goalPoint) {
         Pose botPos = follower.getPose();
 
@@ -96,6 +86,7 @@ public class Turret {
 
         return Math.toDegrees(relativeAngle);
     }
+    */
 
     public Pose pickAimPose(){
         if(follower.getPose().getY() > 72){
@@ -117,7 +108,7 @@ public class Turret {
 
     public int moveToAngle(double angleGoal){
         updateCurrentAngle();
-        int targetTicks = (int) Math.round(((angleGoal / 360.0)) * TICKS_PER_MOTOR_REV * gearRatio);
+        int targetTicks = (int) Math.round(((angleGoal / (2 * Math.PI))) * TICKS_PER_MOTOR_REV * gearRatio);
         if (Math.abs(targetTicks - turretDriveMotor.getTargetPosition()) > acceptableTickError) {
             turretDriveMotor.setTargetPosition(targetTicks);
         }

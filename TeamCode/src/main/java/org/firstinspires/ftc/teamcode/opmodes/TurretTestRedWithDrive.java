@@ -17,6 +17,7 @@ public class TurretTestRedWithDrive extends OpMode{
     public Follower follower;
     public Turret turret;
     public Drivetrain drivetrain;
+    Pose testPose;
 
     public void init(){
         follower = Constants.createFollower(hardwareMap);
@@ -25,6 +26,7 @@ public class TurretTestRedWithDrive extends OpMode{
         turret.initialize(hardwareMap ,Turret.teamColor.redTeam, follower);
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap);
+        testPose = new Pose(72,72);
     }
 
     public void loop(){
@@ -34,13 +36,15 @@ public class TurretTestRedWithDrive extends OpMode{
 
         drivetrain.driveFieldRelative(leftStickX, leftStickY, rightStickX);
 
-        double aimTicks = turret.updateLoop();
+        double aimAngle = turret.findAngleToPoint(testPose);
+        double aimTicks = turret.moveToAngle(aimAngle);
+        //double aimTicks = turret.updateLoop();
         telemetry.addData("State:", turret.getTurretState());
         telemetry.addData("Bot X:", follower.getPose().getX());
         telemetry.addData("Bot Y:", follower.getPose().getY());
-        telemetry.addData("Bot Heading:", follower.getPose().getHeading());
+        telemetry.addData("Bot Heading:", Math.toDegrees(follower.getPose().getHeading()));
         //telemetry.addData("Quad additive:", turret.findQuadrantAdditive(follower.getPose(), turret.pickAimPose()));
-        telemetry.addData("Aim angle:", turret.findAngleToPoint(turret.pickAimPose()));
+        telemetry.addData("Aim angle:", Math.toDegrees(turret.findAngleToPoint(testPose)));
         telemetry.addData("Tick Goal:", aimTicks);
         telemetry.addData("Turret Motor amps:", turret.turretDriveMotor.getCurrent(CurrentUnit.AMPS));
         telemetry.update();
