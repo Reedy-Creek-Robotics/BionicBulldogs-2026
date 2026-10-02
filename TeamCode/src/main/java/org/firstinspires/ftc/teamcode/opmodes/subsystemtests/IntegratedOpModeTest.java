@@ -7,9 +7,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
-@TeleOp(name = "integratedOpModeTest")
+@TeleOp(name = "IntegratedOpModeTest")
 
-public class integratedOpModeTest extends OpMode {
+public class IntegratedOpModeTest extends OpMode {
     Drivetrain drivetrain;
     Intake intake;
     public Shooter shooter;
@@ -26,7 +26,9 @@ public class integratedOpModeTest extends OpMode {
         //shooter init
         shooter = new Shooter();
         shooter.initialize(hardwareMap);
-        velocityGoal = 0;
+        velocityGoal = 1500;
+        telemetry.addLine("initialized");
+        telemetry.update();
     }
 
     public void loop() {
@@ -45,13 +47,23 @@ public class integratedOpModeTest extends OpMode {
         }
         //shooter
         if(gamepad1.dpadUpWasPressed()) {
-            velocityGoal = velocityGoal + 150;
-        }
-        if(gamepad1.dpadDownWasPressed()){
-            velocityGoal = velocityGoal - 150;
+            velocityGoal = velocityGoal + 50;
+            shooter.setVel(velocityGoal);
         }
 
-        shooter.setVel(velocityGoal);
+        if(gamepad1.dpadDownWasPressed()){
+            velocityGoal = velocityGoal - 50;
+            shooter.setVel(velocityGoal);
+        }
+
+        //shooter on/off
+        if (gamepad1.crossWasPressed()){
+            shooter.setVel(velocityGoal);
+        }
+        if(gamepad1.squareWasPressed()){
+            shooter.setVel(0);
+        }
+
         telemetry.addData("intake state:", intake.getIntakeState());
         telemetry.addData("requested vel:", velocityGoal);
         telemetry.addData("actual vel:", shooter.getMotorVelocity());
