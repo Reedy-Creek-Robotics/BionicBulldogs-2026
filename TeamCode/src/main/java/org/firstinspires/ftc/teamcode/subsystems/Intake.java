@@ -7,13 +7,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Intake {
-
-    /*
-    int intakeState = 2;
-    int FORWARD = 1;
-    int STOP = 2;
-    int BACKWARD = 3;
-     */
     public enum IntakeStates {
         FORWARD,
         STOP,
