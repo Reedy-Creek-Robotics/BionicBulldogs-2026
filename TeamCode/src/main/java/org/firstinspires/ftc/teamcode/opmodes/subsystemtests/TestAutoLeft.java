@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.subsystemtests;
 
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.pedroPathing.AutoPaths;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 

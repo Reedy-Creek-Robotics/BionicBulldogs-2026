@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.subsystemtests;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,29 +6,37 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
 
 @TeleOp(name = "IntegratedOpModeTest")
 
-public class IntegratedOpModeTest extends OpMode {
+public class IntegratedOpMode extends OpMode {
     Drivetrain drivetrain;
     Intake intake;
     public Shooter shooter;
     public double velocityGoal;
+    public ShooterGate shooterGate;
 
 
     public void init() {
         //drivetrain init
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap);
+
         //intake init
         intake = new Intake();
         intake.init(hardwareMap);
+
         //shooter init
         shooter = new Shooter();
         shooter.initialize(hardwareMap);
         velocityGoal = 1500;
         telemetry.addLine("initialized");
         telemetry.update();
+
+        // Gate init
+        shooterGate = new ShooterGate();
+        shooterGate.init(hardwareMap);
     }
 
     public void loop() {
@@ -38,6 +46,7 @@ public class IntegratedOpModeTest extends OpMode {
         double rightStickX = gamepad1.right_stick_x;
 
         drivetrain.driveFieldRelative(leftStickX, leftStickY, rightStickX);
+
         //intake
         if(gamepad1.rightBumperWasPressed()){
             intake.ToggleForward();
@@ -45,6 +54,7 @@ public class IntegratedOpModeTest extends OpMode {
         if(gamepad1.leftBumperWasPressed() ){
             intake.ToggleBackward();
         }
+
         //shooter
         if(gamepad1.dpadUpWasPressed()) {
             velocityGoal = velocityGoal + 50;
@@ -57,13 +67,21 @@ public class IntegratedOpModeTest extends OpMode {
         }
 
         //shooter on/off
-        if (gamepad1.crossWasPressed()){
+        if (gamepad1.squareWasPressed()){
             shooter.setVel(velocityGoal);
         }
-        if(gamepad1.squareWasPressed()){
+        if(gamepad1.triangleWasPressed()){
             shooter.setVel(0);
         }
 
+        // Gate
+        if(gamepad1.crossWasPressed()){
+            shooterGate.open();
+        }
+        ShooterGate.gateStates gateState = shooterGate.updateLoop();
+
+        // Telemetry
+        telemetry.addData("GateState:" , gateState);
         telemetry.addData("intake state:", intake.getIntakeState());
         telemetry.addData("requested vel:", velocityGoal);
         telemetry.addData("actual vel:", shooter.getMotorVelocity());

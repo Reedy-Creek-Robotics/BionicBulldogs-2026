@@ -21,11 +21,11 @@ public class ShooterGate {
     private static final double closeTime = 1;
     private static final double waitTime = 1;
     private static final double openPos = 0;
-    private static final double closePos = 0.5;
+    private static final double closePos = 0.3;
     private ElapsedTime gateTime;
 
     public void init(HardwareMap hwMap){
-        gateServo = hwMap.get(Servo.class, "position_servo");
+        gateServo = hwMap.get(Servo.class, "GateServo");
         timeGoal = 0.0;
         gateServo.setPosition(closePos);
         gateTime = new ElapsedTime();
