@@ -78,7 +78,8 @@ public class IntegratedOpMode extends OpMode {
         if(gamepad1.crossWasPressed()){
             shooterGate.open();
         }
-        ShooterGate.gateStates gateState = shooterGate.updateLoop();
+        shooterGate.updateLoop();
+        ShooterGate.GateStates gateState = shooterGate.getGateState();
 
         // Telemetry
         telemetry.addData("GateState:" , gateState);

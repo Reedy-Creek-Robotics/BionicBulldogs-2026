@@ -27,6 +27,8 @@ public class ShooterGateTest extends OpMode {
         } else if (gamepad1.circleWasPressed()){
             shooterGate.close();
         }
-        telemetry.addData("GateState:" , shooterGate.updateLoop());
+
+        shooterGate.updateLoop();
+        telemetry.addData("GateState:" , shooterGate.getGateState());
     }
 }

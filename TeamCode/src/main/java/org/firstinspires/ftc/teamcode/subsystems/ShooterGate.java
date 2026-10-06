@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.concurrent.TimeUnit;
 
 public class ShooterGate {
-    public enum gateStates{
+    public enum GateStates {
         inactive,
         opening,
         closing,
         waiting
     }
 
-    private gateStates currentState;
+    private GateStates currentState;
     private double timeGoal;
     private Servo gateServo;
     private static final double openTime = 1;
@@ -35,43 +35,45 @@ public class ShooterGate {
         gateServo.setPosition(openPos);
         gateTime.reset();
         timeGoal = openTime;
-        currentState = gateStates.opening;
+        currentState = GateStates.opening;
     }
 
     public void close(){
         gateServo.setPosition(closePos);
         gateTime.reset();
         timeGoal = closeTime;
-        currentState = gateStates.closing;
+        currentState = GateStates.closing;
     }
 
     public void waitOpen(){
         gateTime.reset();
         timeGoal = waitTime;
-        currentState = gateStates.waiting;
+        currentState = GateStates.waiting;
     }
 
-    public gateStates updateLoop() {
-        if (currentState == gateStates.inactive) {
-            return currentState;
+    public void updateLoop() {
+        if (currentState == GateStates.inactive) {
+            return;
         }
         if (gateTime.time(TimeUnit.SECONDS) < timeGoal) {
-            return currentState;
+            return;
         }
 
 
-        if (currentState == gateStates.opening) {
+        if (currentState == GateStates.opening) {
             waitOpen();
-            return currentState;
+            return;
         }
-        if (currentState == gateStates.waiting) {
+        if (currentState == GateStates.waiting) {
             close();
-            return currentState;
+            return;
         }
-        if (currentState == gateStates.closing) {
-            currentState = gateStates.inactive;
-            return currentState;
+        if (currentState == GateStates.closing) {
+            currentState = GateStates.inactive;
         }
+    }
+
+    public GateStates getGateState(){
         return currentState;
     }
 }
