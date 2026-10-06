@@ -8,27 +8,25 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 @TeleOp(name = "ShooterTest")
 public class ShooterTest extends OpMode{
     public Shooter shooter;
-    public double powerGoal;
+    public double velocityGoal;
 
     public void init() {
         shooter = new Shooter();
         shooter.initialize(hardwareMap);
-        powerGoal = 0;
+        velocityGoal = 0;
     }
 
     public void loop() {
-        double requestedPower = -gamepad1.left_stick_y;
-        if(requestedPower > powerGoal) {
-            powerGoal = requestedPower;
+        if(gamepad1.dpadUpWasPressed()) {
+            velocityGoal = velocityGoal + 150;
         }
-        if(gamepad1.a){
-            powerGoal = 0;
+        if(gamepad1.dpadDownWasPressed()){
+            velocityGoal = velocityGoal - 150;
         }
 
-        shooter.setPower(powerGoal);
-        telemetry.addData("A:", gamepad1.a);
-        telemetry.addData("power:", powerGoal);
-        telemetry.addData("joystick:", powerGoal);
+        shooter.setVel(velocityGoal);
+        telemetry.addData("requested velocity:", velocityGoal);
+        telemetry.addData("current velocity", shooter.getMotorVelocity());
         telemetry.update();
     }
 }

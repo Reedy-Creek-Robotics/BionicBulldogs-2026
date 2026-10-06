@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Intake {
-    int IntakeState = 2;
-    int FORWARD = 1;
-    int STOP = 2;
-    int BACKWARD = 3;
+    public enum IntakeStates {
+        FORWARD,
+        STOP,
+        BACKWARD
+    }
+    IntakeStates intakeState = IntakeStates.STOP;
     double totalCurrent = 0;
     double counter = 0;
     double avgCurrent = 0;
@@ -24,23 +26,25 @@ public class Intake {
         intakeMotor.setPower(0.0);
     }
 
+    public IntakeStates getIntakeState(){
+        return intakeState;
+    }
+
     public void setFORWARD() {
         intakeMotor.setPower(1.0);
-        IntakeState = FORWARD;
+        intakeState = IntakeStates.FORWARD;
     }
 
     public void setBACKWARD() {
         intakeMotor.setPower(-1.0);
-        IntakeState = BACKWARD;
-
+        intakeState = IntakeStates.BACKWARD;
     }
 
     public void setSTOP() {
         intakeMotor.setPower(0.0);
-        IntakeState = STOP;
-    }
+        intakeState = IntakeStates.STOP;    }
     public void ToggleForward(){
-        if (IntakeState == FORWARD){
+        if (intakeState == IntakeStates.FORWARD){
             setSTOP();
         }
         else{
@@ -48,7 +52,7 @@ public class Intake {
         }
     }
     public void ToggleBackward(){
-        if (IntakeState == BACKWARD){
+        if (intakeState == IntakeStates.BACKWARD){
             setSTOP();
         }
         else {
@@ -61,7 +65,7 @@ public class Intake {
 
     public double getAvgCurrent() {
         counter = counter + 1;
-        if (IntakeState != 2) {
+        if (intakeState != IntakeStates.STOP) {
             if (counter % 10 == 0) {
                 totalCurrent = totalCurrent + getMotorCurrent();
                 avgCurrent = totalCurrent / (counter / 10);
