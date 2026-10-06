@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Drivetrain {
     public DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
     public IMU imu;
+    public GoBildaPinpointDriver pinpoint;
+
     public void init(HardwareMap hwMap){
         frontLeftMotor = hwMap.get(DcMotor.class, "front_left_motor");
         backLeftMotor = hwMap.get(DcMotor.class, "back_left_motor");
@@ -43,7 +46,8 @@ public class Drivetrain {
         );
 
         imu.initialize(new IMU.Parameters(RevOrientation));
-        imu.resetYaw();
+        pinpoint = hwMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        pinpoint.resetPosAndIMU();
     }
 
     public void drive(double forward, double strafe, double rotate) {
@@ -69,10 +73,10 @@ public class Drivetrain {
     public void driveFieldRelative(double forward, double strafe, double rotate){
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
+        pinpoint.update();
+        double currentHeading = pinpoint.getHeading(AngleUnit.RADIANS);
 
-        theta = AngleUnit.normalizeRadians(theta -
-                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)
-        );
+        theta = AngleUnit.normalizeRadians(theta - currentHeading);
 
         double newForward = r * Math.sin(theta);
         double newStrafe = r * Math.cos(theta);
