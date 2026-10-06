@@ -43,6 +43,7 @@ public class Drivetrain {
         );
 
         imu.initialize(new IMU.Parameters(RevOrientation));
+        imu.resetYaw();
     }
 
     public void drive(double forward, double strafe, double rotate) {
