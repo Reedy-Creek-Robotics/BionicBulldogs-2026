@@ -29,6 +29,7 @@ public class ShooterGate {
         timeGoal = 0.0;
         gateServo.setPosition(closePos);
         gateTime = new ElapsedTime();
+        currentState = GateStates.inactive;
     }
 
     public void open(){
