@@ -24,7 +24,7 @@ public class PanelsControl {
     /**
      * This prepares Panels Field for using Pedro Offsets
      */
-    public static void init() {
+    public void init() {
         panelsField.setOffsets(PanelsField.INSTANCE.getPresets().getPEDRO_PATHING());
     }
 
