@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -16,6 +17,8 @@ public class IntegratedOpMode extends OpMode {
     public Shooter shooter;
     public double velocityGoal;
     public ShooterGate shooterGate;
+
+    public DcMotor turretMotor;
 
 
     public void init() {
@@ -37,6 +40,10 @@ public class IntegratedOpMode extends OpMode {
         // Gate init
         shooterGate = new ShooterGate();
         shooterGate.init(hardwareMap);
+
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        turretMotor.setTargetPosition(0);
     }
 
     public void loop() {
