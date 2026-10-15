@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
-
+/*
 import static java.lang.Math.sqrt;
 
 import com.pedropathing.follower.Follower;
@@ -8,7 +8,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 public abstract class AutoPaths extends OpMode{
     public static Follower follower;
 
@@ -64,3 +63,4 @@ public abstract class AutoPaths extends OpMode{
         }
     }
 }
+*/

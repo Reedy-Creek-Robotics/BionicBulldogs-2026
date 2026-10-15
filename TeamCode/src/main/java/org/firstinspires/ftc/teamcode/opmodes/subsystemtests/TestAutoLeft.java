@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.subsystemtests;
 
-
+/*
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
@@ -27,3 +27,4 @@ public class TestAutoLeft extends AutoPaths {
         startPath = new Path(new BezierLine(leftStart, point2));
     }
 }
+*/
