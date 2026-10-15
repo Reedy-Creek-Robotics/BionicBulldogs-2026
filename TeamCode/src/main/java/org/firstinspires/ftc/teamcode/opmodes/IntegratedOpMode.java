@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
 
-@TeleOp(name = "IntegratedOpModeTest")
+@TeleOp(name = "IntegratedOpMode")
 
 public class IntegratedOpMode extends OpMode {
     Drivetrain drivetrain;
@@ -18,7 +18,7 @@ public class IntegratedOpMode extends OpMode {
     public double velocityGoal;
     public ShooterGate shooterGate;
 
-    public DcMotor turretMotor;
+    //public DcMotor turretMotor;
 
 
     public void init() {
@@ -41,9 +41,10 @@ public class IntegratedOpMode extends OpMode {
         shooterGate = new ShooterGate();
         shooterGate.init(hardwareMap);
 
-        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turretMotor.setTargetPosition(0);
+        //turretMotor = hardwareMap.get(DcMotor.class, "");
+        //turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //turretMotor.setTargetPosition(0);
     }
 
     public void loop() {
