@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -17,6 +16,7 @@ public class IntegratedOpMode extends OpMode {
     public Shooter shooter;
     public double velocityGoal;
     public ShooterGate shooterGate;
+    public double blackboardHeading;
 
     //public DcMotor turretMotor;
 
@@ -25,6 +25,10 @@ public class IntegratedOpMode extends OpMode {
         //drivetrain init
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap);
+        //if(blackboard.containsKey("Heading")) {
+        //    blackboardHeading = (double) blackboard.get("Heading");
+        //    drivetrain.setPinpointHeading(blackboardHeading);
+        //}
 
         //intake init
         intake = new Intake();
@@ -34,17 +38,15 @@ public class IntegratedOpMode extends OpMode {
         shooter = new Shooter();
         shooter.initialize(hardwareMap);
         velocityGoal = 1500;
-        telemetry.addLine("initialized");
-        telemetry.update();
 
         // Gate init
         shooterGate = new ShooterGate();
         shooterGate.init(hardwareMap);
 
-        //turretMotor = hardwareMap.get(DcMotor.class, "");
-        //turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //turretMotor.setTargetPosition(0);
+        //telemetry.addData("blackboardHeading: ", blackboardHeading);
+        telemetry.addLine("initialized");
+        telemetry.update();
+
     }
 
     public void loop() {
@@ -87,6 +89,11 @@ public class IntegratedOpMode extends OpMode {
             shooterGate.open();
         }
         shooterGate.updateLoop();
+
+        if(gamepad1.optionsWasPressed()){
+            drivetrain.resetPinpoint();
+        }
+
         ShooterGate.GateStates gateState = shooterGate.getGateState();
 
         // Telemetry
@@ -94,6 +101,7 @@ public class IntegratedOpMode extends OpMode {
         telemetry.addData("intake state:", intake.getIntakeState());
         telemetry.addData("requested vel:", velocityGoal);
         telemetry.addData("actual vel:", shooter.getMotorVelocity());
+        telemetry.addData("Heading", drivetrain.getPinpointHeading());
         telemetry.update();
     }
 }

@@ -26,9 +26,12 @@ public class BadAuto extends LinearOpMode {
     public void driveForward(){
         timeTracker.reset();
         drivetrain.drive(0.5,0,0);
-        while (timeTracker.time(TimeUnit.MILLISECONDS) < timeToDrive){
+        //while (timeTracker.time(TimeUnit.MILLISECONDS) < timeToDrive){
             // I'm also an empty loop :)
-        }
+        //}
+        //double fetchedHeading = drivetrain.getPinpointHeading();
+        //blackboard.put("Heading", fetchedHeading);
+        //telemetry.addData("Heading", drivetrain.getPinpointHeading());
     }
 
     public boolean TimeDrive(){

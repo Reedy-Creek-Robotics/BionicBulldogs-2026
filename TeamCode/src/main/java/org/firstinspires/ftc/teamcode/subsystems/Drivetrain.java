@@ -70,6 +70,20 @@ public class Drivetrain {
         backRightMotor.setPower(maxSpeed * (backRightPower / maxPower));
     }
 
+    public void resetPinpoint(){
+        pinpoint.resetPosAndIMU();
+    }
+
+    public Double getPinpointHeading(){
+        pinpoint.update();
+        return pinpoint.getHeading(AngleUnit.DEGREES);
+    }
+
+    public void setPinpointHeading(double givenHeading){
+        pinpoint.setHeading(givenHeading, AngleUnit.DEGREES);
+        pinpoint.update();
+    }
+
     public void driveFieldRelative(double forward, double strafe, double rotate){
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
