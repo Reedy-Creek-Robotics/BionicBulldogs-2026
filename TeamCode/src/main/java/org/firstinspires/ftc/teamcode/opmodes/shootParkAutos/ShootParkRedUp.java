@@ -34,12 +34,14 @@ public class ShootParkRedUp extends LinearOpMode {
     ElapsedTime timeTracker;
     Intake intake;
 
+    public static final PoseFactory poseFactory = PoseFactory.degrees();
+
     public Pose startPose;
     public Pose parkingPose;
     public Follower follower;
 
     public Path startToPark(){
-        return Paths.line(FieldPoints.StartingPositions.redUp, FieldPoints.ParkingZones.redUpPark).linear(FieldPoints.StartingPositions.redUp, FieldPoints.ParkingZones.redUpPark);
+        return Paths.curve(startPose, poseFactory.of(24,48,0) , parkingPose).constant(startPose);
     }
     public void driveForward(){
         intake.setSTOP();
@@ -81,6 +83,9 @@ public class ShootParkRedUp extends LinearOpMode {
         follower.update();
 
         Scheduler.reset();
+
+        startPose = FieldPoints.StartingPositions.redUp;
+        parkingPose = FieldPoints.ParkingZones.redUpPark;
 
 
 

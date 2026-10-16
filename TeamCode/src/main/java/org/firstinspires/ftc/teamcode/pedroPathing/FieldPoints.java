@@ -5,6 +5,9 @@ import static org.firstinspires.ftc.teamcode.robot.BotDimensions.botYSize;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
+
+import org.firstinspires.ftc.teamcode.robot.BotDimensions;
+
 public class FieldPoints {
     public static final PoseFactory poseFactory = PoseFactory.degrees();
     public static class GeneralConstants {
@@ -31,8 +34,8 @@ public class FieldPoints {
 
     public static class ParkingZones {
         private static final double offset = 3;
-        public static final Pose redUpPark = poseFactory.of(GeneralConstants.tileSize, GeneralConstants.tileSize * 4, 90);//(11 - offset), (144 - (GeneralConstants.tileSize * 2) + GeneralConstants.tileSeam + offset),180);
-        public static final Pose redDownPark = poseFactory.of((11 - offset), (144 - GeneralConstants.tileSize - GeneralConstants.tileSeam - offset),180);
+        public static final Pose redUpPark = poseFactory.of((11 - offset + (BotDimensions.botXSize / 2)), (144 - (GeneralConstants.tileSize * 2) - GeneralConstants.tileSeam - offset - (botYSize / 2)) , 90);//(11 - offset), (144 - (GeneralConstants.tileSize * 2) + GeneralConstants.tileSeam + offset),180);
+        public static final Pose redDownPark = poseFactory.of((11 - offset + (BotDimensions.botXSize / 2)), (144 - GeneralConstants.tileSize - GeneralConstants.tileSeam - offset + (botYSize / 2)),180);
         public static final Pose blueUpPark = poseFactory.of((144 - 11 + offset), ((GeneralConstants.tileSize * 2) - GeneralConstants.tileSeam - offset),0);
         public static final Pose blueDownPark = poseFactory.of((144 - 11 + offset), (GeneralConstants.tileSize + GeneralConstants.tileSeam + offset),0);
     }
