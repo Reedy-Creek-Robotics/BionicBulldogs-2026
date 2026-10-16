@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.FlowerRobber;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
@@ -16,6 +17,7 @@ public class IntegratedOpMode extends OpMode {
     public Shooter shooter;
     public double velocityGoal;
     public ShooterGate shooterGate;
+    public FlowerRobber flowerRobber;
     public double blackboardHeading;
 
     //public DcMotor turretMotor;
@@ -42,6 +44,9 @@ public class IntegratedOpMode extends OpMode {
         // Gate init
         shooterGate = new ShooterGate();
         shooterGate.init(hardwareMap);
+
+        flowerRobber = new FlowerRobber();
+        flowerRobber.init(hardwareMap);
 
         //telemetry.addData("blackboardHeading: ", blackboardHeading);
         telemetry.addLine("initialized");
@@ -94,14 +99,19 @@ public class IntegratedOpMode extends OpMode {
             drivetrain.resetPinpoint();
         }
 
+        if(gamepad1.circleWasPressed()){
+            flowerRobber.toggleState();
+        }
+
         ShooterGate.GateStates gateState = shooterGate.getGateState();
 
         // Telemetry
-        telemetry.addData("GateState:" , gateState);
-        telemetry.addData("intake state:", intake.getIntakeState());
-        telemetry.addData("requested vel:", velocityGoal);
-        telemetry.addData("actual vel:", shooter.getMotorVelocity());
-        telemetry.addData("Heading", drivetrain.getPinpointHeading());
+        telemetry.addData("Gate State: " , gateState);
+        telemetry.addData("Intake State: ", intake.getIntakeState());
+        telemetry.addData("Requested Shooter Vel: ", velocityGoal);
+        telemetry.addData("Actual Shooter Vel: ", shooter.getMotorVelocity());
+        telemetry.addData("Heading: ", drivetrain.getPinpointHeading());
+        telemetry.addData("Flower Intake: ", flowerRobber.getState());
         telemetry.update();
     }
 }
