@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 @Autonomous
 public class BadAutoDown extends LinearOpMode {
-    private static final int velocityGoal = 903;
+    private static final int velocityGoal = 2100;
     private static final int shooterError = 20;
     private static final int timeToDrive = 500;
     private static final int escapeTime = 23;
@@ -26,9 +26,13 @@ public class BadAutoDown extends LinearOpMode {
 
     public void driveForward(){
         timeTracker.reset();
-        drivetrain.drive(0.5,0,0);
+        drivetrain.drive(0.5,0,0, 0.5);
         while (timeTracker.time(TimeUnit.MILLISECONDS) < timeToDrive){
             // I'm also an empty loop :)
+        }
+        drivetrain.drive(0,0,0);
+        while (timeTracker.time(TimeUnit.MILLISECONDS) < timeToDrive + 1000){
+            // empty
         }
     }
 
