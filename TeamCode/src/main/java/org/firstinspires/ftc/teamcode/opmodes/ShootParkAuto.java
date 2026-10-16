@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.pedropathing.follower.Follower;
@@ -142,3 +143,4 @@ public class ShootParkAuto extends LinearOpMode {
         }
     }
 }
+*/
