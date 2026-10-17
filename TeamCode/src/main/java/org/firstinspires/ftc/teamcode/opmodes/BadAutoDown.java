@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.FlowerRobber;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
@@ -23,6 +24,7 @@ public class BadAutoDown extends LinearOpMode {
     Drivetrain drivetrain;
     ElapsedTime timeTracker;
     Intake intake;
+    FlowerRobber flowerRobber;
 
     public void driveForward(){
         timeTracker.reset();
@@ -59,6 +61,10 @@ public class BadAutoDown extends LinearOpMode {
 
         timeTracker = new ElapsedTime();
         timeTracker.reset();
+
+        flowerRobber = new FlowerRobber();
+        flowerRobber.init(hardwareMap);
+
         waitForStart();
 
         telemetry.addData("Reached Velocity: ", false);

@@ -19,6 +19,7 @@ public class IntegratedOpMode extends OpMode {
     public ShooterGate shooterGate;
     public FlowerRobber flowerRobber;
     public double blackboardHeading;
+    public boolean flowerStart;
 
     //public DcMotor turretMotor;
 
@@ -39,14 +40,14 @@ public class IntegratedOpMode extends OpMode {
         //shooter init
         shooter = new Shooter();
         shooter.initialize(hardwareMap);
-        velocityGoal = 1500;
+        velocityGoal = 1950;
 
         // Gate init
         shooterGate = new ShooterGate();
         shooterGate.init(hardwareMap);
 
         flowerRobber = new FlowerRobber();
-        flowerRobber.init(hardwareMap);
+        flowerStart = true;
 
         //telemetry.addData("blackboardHeading: ", blackboardHeading);
         telemetry.addLine("initialized");
@@ -55,6 +56,10 @@ public class IntegratedOpMode extends OpMode {
     }
 
     public void loop() {
+        if(flowerStart){
+            flowerRobber.init(hardwareMap);
+            flowerStart = false;
+        }
         //drivetrain
         double leftStickX = -gamepad1.left_stick_x;
         double leftStickY = -gamepad1.left_stick_y;
