@@ -78,7 +78,7 @@ public class ShootParkRedUp extends LinearOpMode {
         timeTracker = new ElapsedTime();
         timeTracker.reset();
 
-        follower = Constants.create(hardwareMap);
+        //follower = Constants.create(hardwareMap);
         follower.setPose(FieldPoints.StartingPositions.redUp);
         follower.update();
 
