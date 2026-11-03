@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous
@@ -41,7 +42,8 @@ public class ShootParkRedUp extends LinearOpMode {
     public Follower follower;
 
     public Path startToPark(){
-        return Paths.curve(startPose, poseFactory.of(24,48,0) , parkingPose).constant(startPose);
+        //return Paths.curve(startPose, poseFactory.of(24,48, 0) , parkingPose).constant(startPose);
+        return Paths.line(startPose, poseFactory.of(72,72,90)).constant(startPose);
     }
     public void driveForward(){
         intake.setSTOP();
@@ -50,6 +52,18 @@ public class ShootParkRedUp extends LinearOpMode {
         schedule(follow(follower, startToPark()));
         while (opModeIsActive()) {
             follower.update();
+            telemetry.addData("x: ", follower.pose().x());
+            telemetry.addData("y: ", follower.pose().y());
+            telemetry.addData("Goal: ", parkingPose);
+            Map<String, Object> drivetrainLog = follower.debug().drivetrain();
+            Map<String, Object> algorithmLog = follower.debug().algorithm();
+            Map<String, Object> localizerLog = follower.debug().localizer();
+            Map<String, Object> followStateLog = follower.debug().followState();
+            telemetry.addData("arivetrainLog: ", drivetrainLog);
+            telemetry.addData("algorithmLog: ", algorithmLog);
+            telemetry.addData("localizerLog: ", localizerLog);
+            telemetry.addData("followStateLog: ", followStateLog);
+            telemetry.update();
             Scheduler.execute();
         }
     }
@@ -78,7 +92,7 @@ public class ShootParkRedUp extends LinearOpMode {
         timeTracker = new ElapsedTime();
         timeTracker.reset();
 
-        //follower = Constants.create(hardwareMap);
+        follower = Constants.create(hardwareMap);
         follower.setPose(FieldPoints.StartingPositions.redUp);
         follower.update();
 
@@ -87,21 +101,31 @@ public class ShootParkRedUp extends LinearOpMode {
         startPose = FieldPoints.StartingPositions.redUp;
         parkingPose = FieldPoints.ParkingZones.redUpPark;
 
-
+        // ===========================================================================================================================================
 
         waitForStart();
+
+        // ===========================================================================================================================================
 
         telemetry.addData("Reached Velocity: ", false);
         telemetry.addData("Velocity: ", shooter.getMotorVelocity());
         telemetry.addData("CurrentTime: ", timeTracker.time(TimeUnit.SECONDS));
         telemetry.addData("Time Return: ", TimeDrive());
         telemetry.addData("Gate State: ", shooterGate.getGateState());
+        telemetry.addData("x: ", follower.pose().x());
+        telemetry.addData("y: ", follower.pose().y());
         telemetry.update();
 
+        // init
+        // spin up shooter
+        // start intake
+        // open gate
+        // call move
 
         // Spin up shooter
         shooter.setVel(velocityGoal);
 
+        // Wait for shooter to reach vel goal
         while (Math.abs(velocityGoal - shooter.getMotorVelocity()) > shooterError){
             // I am an empty loop :D
             boolean timeReturn = TimeDrive();
@@ -110,6 +134,8 @@ public class ShootParkRedUp extends LinearOpMode {
             telemetry.addData("CurrentTime: ", timeTracker.time(TimeUnit.SECONDS));
             telemetry.addData("Time Return: ", timeReturn);
             telemetry.addData("Gate State: ", shooterGate.getGateState());
+            telemetry.addData("x: ", follower.pose().x());
+            telemetry.addData("y: ", follower.pose().y());
             telemetry.update();
             if(timeReturn){
                 return;
@@ -117,6 +143,7 @@ public class ShootParkRedUp extends LinearOpMode {
             // not anymore D:
         }
 
+        // Start intake/transfer
         intake.ToggleForward();
 
         // Opening gate
@@ -127,8 +154,11 @@ public class ShootParkRedUp extends LinearOpMode {
         telemetry.addData("CurrentTime: ", timeTracker.time(TimeUnit.SECONDS));
         telemetry.addData("Time Return: ", TimeDrive());
         telemetry.addData("Gate State: ", shooterGate.getGateState());
+        telemetry.addData("x: ", follower.pose().x());
+        telemetry.addData("y: ", follower.pose().y());
         telemetry.update();
 
+        // Wait for shooter to spin up
         while (shooterGate.getGateState() != ShooterGate.GateStates.inactive){
             shooterGate.updateLoop();
             telemetry.addData("Reached Velocity: ", true);
@@ -136,12 +166,15 @@ public class ShootParkRedUp extends LinearOpMode {
             telemetry.addData("CurrentTime: ", timeTracker.time(TimeUnit.SECONDS));
             telemetry.addData("Time Return: ", TimeDrive());
             telemetry.addData("Gate State: ", shooterGate.getGateState());
+            telemetry.addData("x: ", follower.pose().x());
+            telemetry.addData("y: ", follower.pose().y());
             telemetry.update();
             if(TimeDrive()){
                 return;
             }
         }
 
+        // ================================================================================================
         // Moving forward
         intake.ToggleForward();
         driveForward();
@@ -150,7 +183,8 @@ public class ShootParkRedUp extends LinearOpMode {
         telemetry.addData("CurrentTime: ", timeTracker.time(TimeUnit.SECONDS));
         telemetry.addData("Time Return: ", TimeDrive());
         telemetry.addData("Gate State: ", shooterGate.getGateState());
+        telemetry.addData("x: ", follower.pose().x());
+        telemetry.addData("y: ", follower.pose().y());
         telemetry.update();
-
     }
 }
