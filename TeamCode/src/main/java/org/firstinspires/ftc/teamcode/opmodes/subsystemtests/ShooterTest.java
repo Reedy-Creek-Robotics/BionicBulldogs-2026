@@ -18,10 +18,10 @@ public class ShooterTest extends OpMode{
 
     public void loop() {
         if(gamepad1.dpadUpWasPressed()) {
-            velocityGoal = velocityGoal + 150;
+            velocityGoal = velocityGoal + 50;
         }
         if(gamepad1.dpadDownWasPressed()){
-            velocityGoal = velocityGoal - 150;
+            velocityGoal = velocityGoal - 50;
         }
 
         shooter.setVel(velocityGoal);

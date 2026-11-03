@@ -50,14 +50,18 @@ public class Drivetrain {
         pinpoint.resetPosAndIMU();
     }
 
-    public void drive(double forward, double strafe, double rotate) {
+    public void drive(double forward, double strafe, double rotate ) {
+        drive(forward, strafe, rotate, 1);
+    }
+
+    public void drive(double forward, double strafe, double rotate, double maxSpeed) {
         double frontLeftPower = forward + strafe + rotate;
         double backLeftPower = forward - strafe + rotate;
         double frontRightPower = forward - strafe - rotate;
         double backRightPower = forward + strafe - rotate;
 
         double maxPower = 1.0;
-        double maxSpeed = 1.0;
+        //double maxSpeed = 1.0;
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(backLeftPower));
@@ -68,6 +72,20 @@ public class Drivetrain {
         backLeftMotor.setPower(maxSpeed * (backLeftPower / maxPower));
         frontRightMotor.setPower(maxSpeed * (frontRightPower / maxPower));
         backRightMotor.setPower(maxSpeed * (backRightPower / maxPower));
+    }
+
+    public void resetPinpoint(){
+        pinpoint.resetPosAndIMU();
+    }
+
+    public Double getPinpointHeading(){
+        pinpoint.update();
+        return pinpoint.getHeading(AngleUnit.DEGREES);
+    }
+
+    public void setPinpointHeading(double givenHeading){
+        pinpoint.setHeading(givenHeading, AngleUnit.DEGREES);
+        pinpoint.update();
     }
 
     public void driveFieldRelative(double forward, double strafe, double rotate){

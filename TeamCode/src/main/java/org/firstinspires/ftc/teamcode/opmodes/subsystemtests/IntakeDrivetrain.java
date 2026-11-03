@@ -16,6 +16,7 @@ public class IntakeDrivetrain extends OpMode {
         //drivetrain
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap);
+
         //intake
         intake = new Intake();
         intake.init(hardwareMap);

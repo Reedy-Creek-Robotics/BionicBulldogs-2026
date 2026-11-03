@@ -15,11 +15,11 @@ public class FlowerRobber {
     public void init(HardwareMap hardwareMap){
         robber = hardwareMap.get(Servo.class, "robber");
         Robberstate = RobberStates.up;
-        robber.setPosition(0.5);
+        robber.setPosition(0.45);
     }
 
     public void setUP(){
-        robber.setPosition(0.5);
+        robber.setPosition(0.45);
         Robberstate = RobberStates.up;
 
     }
