@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
 
-@Autonomous(name = "PedroTestDiagnal", group = "Autonomous")
+@Autonomous(name = "RedUpShootPark", group = "Autonomous")
 public class RedUpShootPark extends LinearOpMode {
 
 
