@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.FlowerRobber;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 @Autonomous
 public class BadAutoDown extends LinearOpMode {
-    private static final int velocityGoal = 903;
+    private static final int velocityGoal = 2100;
     private static final int shooterError = 20;
     private static final int timeToDrive = 500;
     private static final int escapeTime = 23;
@@ -23,12 +24,17 @@ public class BadAutoDown extends LinearOpMode {
     Drivetrain drivetrain;
     ElapsedTime timeTracker;
     Intake intake;
+    FlowerRobber flowerRobber;
 
     public void driveForward(){
         timeTracker.reset();
-        drivetrain.drive(0.5,0,0);
+        drivetrain.drive(0.5,0,0, 0.5);
         while (timeTracker.time(TimeUnit.MILLISECONDS) < timeToDrive){
             // I'm also an empty loop :)
+        }
+        drivetrain.drive(0,0,0);
+        while (timeTracker.time(TimeUnit.MILLISECONDS) < timeToDrive + 1000){
+            // empty
         }
     }
 
@@ -55,6 +61,10 @@ public class BadAutoDown extends LinearOpMode {
 
         timeTracker = new ElapsedTime();
         timeTracker.reset();
+
+        flowerRobber = new FlowerRobber();
+        flowerRobber.init(hardwareMap);
+
         waitForStart();
 
         telemetry.addData("Reached Velocity: ", false);
