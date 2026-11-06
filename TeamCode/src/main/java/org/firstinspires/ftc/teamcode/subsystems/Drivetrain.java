@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+//import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
+//import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Drivetrain {
     public DcMotor frontLeftMotor, backLeftMotor, frontRightMotor, backRightMotor;
-    public IMU imu;
+//    public IMU imu;
     public GoBildaPinpointDriver pinpoint;
 
     public void init(HardwareMap hwMap){
@@ -38,14 +38,15 @@ public class Drivetrain {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        imu = hwMap.get(IMU.class, "imu");
+//        imu = hwMap.get(IMU.class, "imu");
 
-        RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
-        );
+//        RevHubOrientationOnRobot RevOrientation = new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
+//        );
 
-        imu.initialize(new IMU.Parameters(RevOrientation));
+//        imu.initialize(new IMU.Parameters(RevOrientation));
+//        imu.resetYaw();
         pinpoint = hwMap.get(GoBildaPinpointDriver.class, "pinpoint");
         pinpoint.resetPosAndIMU();
     }
@@ -93,6 +94,7 @@ public class Drivetrain {
         double r = Math.hypot(strafe, forward);
         pinpoint.update();
         double currentHeading = pinpoint.getHeading(AngleUnit.RADIANS);
+//        double currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         theta = AngleUnit.normalizeRadians(theta - currentHeading);
 
