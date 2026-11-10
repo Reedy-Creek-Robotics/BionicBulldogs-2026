@@ -184,7 +184,7 @@ public class AprilTag {
     }
 
 
-    public void AprilTagRed() {
+    public Hive AprilTagRed() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection instanceof AprilTagSingleDetection) {
@@ -193,6 +193,8 @@ public class AprilTag {
                 if (singleDet.metadata.name.equals("RED SCORING")) {
                     telemetry.addLine(String.format("\n==== (ID %d) %s", singleDet.id, singleDet.metadata.name));
                     Hive hiveState = Hive.Up;
+                    return hiveState;
+
 
                 }
             } else {
@@ -201,16 +203,20 @@ public class AprilTag {
                     telemetry.addLine(String.format("\n==== Tag Cluster (%s)", clusterDet.metadata.name));
                     telemetry.addLine(String.format("Percent tags found: %d", clusterDet.percentClusterFound));
                     Hive hiveState = Hive.Up;
+                    return hiveState;
+
 
                 } else {
                     telemetry.addLine("hive not detected/hive down");
                     Hive hiveState = Hive.Down;
+                    return hiveState;
                 }
             }
         }
+        return null;
     }
 
-    public void AprilTagBlue() {
+    public Hive AprilTagBlue() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection instanceof AprilTagSingleDetection) {
@@ -219,6 +225,7 @@ public class AprilTag {
                 if (singleDet.metadata.name.equals("BLUE SCORING")) {
                     telemetry.addLine(String.format("\n==== (ID %d) %s", singleDet.id, singleDet.metadata.name));
                     hiveState = Hive.Up;
+                    return hiveState;
                 }
             } else {
                 AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
@@ -226,11 +233,16 @@ public class AprilTag {
                     telemetry.addLine(String.format("\n==== Tag Cluster (%s)", clusterDet.metadata.name));
                     telemetry.addLine(String.format("Percent tags found: %d", clusterDet.percentClusterFound));
                     hiveState = Hive.Up;
+                    return hiveState;
+
                 } else {
-                    telemetry.addLine("hive not detected");
+                    telemetry.addLine("hive down/hive not detected");
                     hiveState = Hive.Down;
+                    return hiveState;
+
                 }
             }
         }
+        return null;
     }
 }
