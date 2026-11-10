@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,9 +12,10 @@ public class Turret {
     //CRServo turretServoTwo;
     DcMotorEx turretEncoder;
 
-    public double K_p = 0.0;
+    public double K_p = 1.0;
     private static final int acceptableAngleError = 5;
-    double angleGoal = 0;
+    private static final int fullPowerThreshold = 500;
+    public double angleGoal = 0;
     private static final double encoderTicksPerDegree = 384.5 / 360.0; // NOT SET DO NOT USE OR YOU WILL SPEND YOUR LIFE DEBUGGING
 
     public void init(HardwareMap hardwareMap) {
@@ -31,14 +33,37 @@ public class Turret {
         turretEncoder.setPower(power);
     }
 
-    public void aimBotRelative(double angle){
-        angleGoal = angle;
+    public double aimFieldRelative(Pose botPose, Pose aimGoal){
+        double botRelativeAngle = findAngle(botPose, aimGoal);
+        double fieldRelativeAngle = botRelativeAngle - botPose.heading();
+
+        // Normalizing to -pi, pi
+        fieldRelativeAngle = Math.atan2(
+                Math.sin(fieldRelativeAngle),
+                Math.cos(fieldRelativeAngle)
+        );
+
+        angleGoal = Math.toDegrees(-fieldRelativeAngle);
+        return botRelativeAngle;
+    }
+
+    public Double findAngle(Pose botPose, Pose aimGoal){
+        double botRelativeX = aimGoal.x() - botPose.x();
+        double botRelativeY = aimGoal.y() - botPose.y();
+        double aimAngle = Math.atan2(botRelativeY, botRelativeX);
+        return aimAngle;
     }
 
     public void updateTurret() {
         double error = (int) Math.round(angleGoal * encoderTicksPerDegree) - turretEncoder.getCurrentPosition();
-        if (acceptableAngleError < Math.abs(error)) {
-            moveServos(error * K_p);
+        if ((acceptableAngleError * encoderTicksPerDegree) < Math.abs(error)) {
+            double power = error * K_p;
+            if(Math.abs(power) > fullPowerThreshold){
+                power = Math.abs(power) / power;
+            } else {
+                power = power / fullPowerThreshold;
+            }
+            moveServos(power);
         } else {moveServos(0);}
     }
 

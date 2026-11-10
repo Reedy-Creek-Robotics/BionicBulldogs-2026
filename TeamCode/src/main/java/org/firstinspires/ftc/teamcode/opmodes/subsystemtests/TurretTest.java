@@ -6,12 +6,10 @@ import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-// import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
-@TeleOp()
+@TeleOp(name = "Turret Test")
 public class TurretTest extends OpMode {
     public Turret turret;
     Follower follower;
@@ -27,7 +25,6 @@ public class TurretTest extends OpMode {
 
         poseFactory = PoseFactory.degrees();
 
-        //follower = Constants.create(hardwareMap);
         follower.setPose(poseFactory.of(0,0,0));
 
         goalPose = poseFactory.of(0,0,0);
@@ -42,18 +39,26 @@ public class TurretTest extends OpMode {
             angleGoal = angleGoal - 5;
         } else if(gamepad1.dpadRightWasPressed()){
             goalPose = poseFactory.of(goalPose.x() + goalAdjust,goalPose.y(),goalPose.heading());
-            turret.setKp(turret.K_p + 0.001);
+            turret.setKp(turret.K_p + 0.01);
         } else if(gamepad1.dpadLeftWasPressed()){
             goalPose = poseFactory.of(goalPose.x() - goalAdjust,goalPose.y(),goalPose.heading());
-            turret.setKp(turret.K_p - 0.001);
+            turret.setKp(turret.K_p - 0.01);
         }
 
         follower.update();
-        telemetry.addData("angleGoal: ", angleGoal);
+
+        Double botReletiveAngle = turret.aimFieldRelative(follower.pose(), goalPose);
+
+        telemetry.addData("Bot X: ", follower.pose().x());
+        telemetry.addData("Bot y: ", follower.pose().y());
+        telemetry.addData("Bot Heading: ", follower.pose().heading());
+        telemetry.addData("Goal X: ", goalPose.x());
+        telemetry.addData("Goal y: ", goalPose.y());
         telemetry.addData("K_p: ", turret.K_p);
+        telemetry.addData("Aim Goal:", turret.angleGoal);
+        telemetry.addData("BotRelitiveAngle: ", botReletiveAngle);
         telemetry.update();
 
-        turret.aimBotRelative(angleGoal);
         turret.updateTurret();
 
     }
