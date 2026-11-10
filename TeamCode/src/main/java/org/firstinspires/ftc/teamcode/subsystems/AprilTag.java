@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 
 import android.util.Size;
+
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -34,6 +36,8 @@ public class AprilTag {
     }
 
     Teams team = Teams.NONE;
+    HardwareMap hardwareMap;
+    Telemetry telemetry;
 
     public enum Hive {
         Up,
@@ -45,7 +49,9 @@ public class AprilTag {
     Hive hiveState = Hive.None;
 
 
-    public void init(Teams team) {
+    public void init(Teams team, HardwareMap hwMap, Telemetry telemetry) {
+        this.hardwareMap = hwMap;
+        this.telemetry = telemetry;
         // set color to teamSide
         this.team = team;
         initCameraValues();
@@ -109,9 +115,6 @@ public class AprilTag {
         final boolean ENABLE_LIVE_VIEW = false;
 
         // ==============================================================
-
-        AprilTagProcessor aprilTag;
-        VisionPortal visionPortal;
 
         ExposureControl exposureControl;
         GainControl gainControl;
@@ -213,24 +216,21 @@ public class AprilTag {
             if (detection instanceof AprilTagSingleDetection) {
                 AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
 
-                if (singleDet.metadata.name.equals( "BLUE SCORING")) {
+                if (singleDet.metadata.name.equals("BLUE SCORING")) {
                     telemetry.addLine(String.format("\n==== (ID %d) %s", singleDet.id, singleDet.metadata.name));
-                    Hive hiveState = Hive.Up;
-
+                    hiveState = Hive.Up;
+                }
+            } else {
+                AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
+                if (clusterDet.metadata.name.equals("BLUE AUDIENCE")) {
+                    telemetry.addLine(String.format("\n==== Tag Cluster (%s)", clusterDet.metadata.name));
+                    telemetry.addLine(String.format("Percent tags found: %d", clusterDet.percentClusterFound));
+                    hiveState = Hive.Up;
                 } else {
-                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
-                    if (clusterDet.metadata.name.equals( "BLUE AUDIENCE")) {
-                        telemetry.addLine(String.format("\n==== Tag Cluster (%s)", clusterDet.metadata.name));
-                        telemetry.addLine(String.format("Percent tags found: %d", clusterDet.percentClusterFound));
-                        Hive hiveState = Hive.Up;
-
-                    } else {
-                        telemetry.addLine("hive not detected");
-                        Hive hiveState = Hive.Down;
-                    }
+                    telemetry.addLine("hive not detected");
+                    hiveState = Hive.Down;
                 }
             }
-
         }
     }
 }

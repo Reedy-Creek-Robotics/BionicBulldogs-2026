@@ -13,7 +13,7 @@ public class AprilTagTest extends OpMode {
 
     @Override
     public void init() {
-        apriltagSub.init(AprilTag.Teams.RED);
+        apriltagSub.init(AprilTag.Teams.RED, hardwareMap, telemetry);
     }
 
 
