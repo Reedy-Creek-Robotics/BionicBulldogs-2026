@@ -213,7 +213,7 @@ public class AprilTag {
                 }
             }
         }
-        return null;
+        return Hive.Down;
     }
 
     public Hive AprilTagBlue() {
@@ -243,6 +243,6 @@ public class AprilTag {
                 }
             }
         }
-        return null;
+        return Hive.Down;
     }
 }
