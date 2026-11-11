@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.FieldPoints;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 
 @TeleOp(name = "Turret Test")
@@ -19,13 +20,13 @@ public class TurretTest extends OpMode {
     public final int goalAdjust = 20;
     public void init(){
         turret = new Turret();
-        turret.init(hardwareMap);
+        turret.init(hardwareMap, Turret.Team.RED);
 
         follower = Constants.create(hardwareMap);
 
         poseFactory = PoseFactory.degrees();
 
-        follower.setPose(poseFactory.of(0,0,0));
+        follower.setPose(FieldPoints.StartingPositions.redUp);
 
         goalPose = poseFactory.of(0,0,0);
     }
@@ -47,19 +48,14 @@ public class TurretTest extends OpMode {
 
         follower.update();
 
-        Double botReletiveAngle = turret.aimFieldRelative(follower.pose(), goalPose);
+        turret.updateTurret(follower.pose());
 
         telemetry.addData("Bot X: ", follower.pose().x());
         telemetry.addData("Bot y: ", follower.pose().y());
         telemetry.addData("Bot Heading: ", follower.pose().heading());
-        telemetry.addData("Goal X: ", goalPose.x());
-        telemetry.addData("Goal y: ", goalPose.y());
+        telemetry.addData("AimSide: ", turret.hiveSide);
         telemetry.addData("K_p: ", turret.K_p);
         telemetry.addData("Aim Goal:", turret.angleGoal);
-        telemetry.addData("BotRelitiveAngle: ", botReletiveAngle);
         telemetry.update();
-
-        turret.updateTurret();
-
     }
 }
