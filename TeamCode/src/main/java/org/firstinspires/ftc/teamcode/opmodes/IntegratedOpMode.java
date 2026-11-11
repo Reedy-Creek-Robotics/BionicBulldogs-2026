@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.FlowerRobber;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
 
-@TeleOp(name = "IntegratedOpModeTest")
+@TeleOp(name = "IntegratedOpMode")
 
 public class IntegratedOpMode extends OpMode {
     Drivetrain drivetrain;
@@ -16,12 +17,21 @@ public class IntegratedOpMode extends OpMode {
     public Shooter shooter;
     public double velocityGoal;
     public ShooterGate shooterGate;
+    public FlowerRobber flowerRobber;
+    public double blackboardHeading;
+    public boolean flowerStart;
+
+    //public DcMotor turretMotor;
 
 
     public void init() {
         //drivetrain init
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap);
+        //if(blackboard.containsKey("Heading")) {
+        //    blackboardHeading = (double) blackboard.get("Heading");
+        //    drivetrain.setPinpointHeading(blackboardHeading);
+        //}
 
         //intake init
         intake = new Intake();
@@ -30,16 +40,26 @@ public class IntegratedOpMode extends OpMode {
         //shooter init
         shooter = new Shooter();
         shooter.initialize(hardwareMap);
-        velocityGoal = 1500;
-        telemetry.addLine("initialized");
-        telemetry.update();
+        velocityGoal = 1950;
 
         // Gate init
         shooterGate = new ShooterGate();
         shooterGate.init(hardwareMap);
+
+        flowerRobber = new FlowerRobber();
+        flowerStart = true;
+
+        //telemetry.addData("blackboardHeading: ", blackboardHeading);
+        telemetry.addLine("initialized");
+        telemetry.update();
+
     }
 
     public void loop() {
+        if(flowerStart){
+            flowerRobber.init(hardwareMap);
+            flowerStart = false;
+        }
         //drivetrain
         double leftStickX = -gamepad1.left_stick_x;
         double leftStickY = -gamepad1.left_stick_y;
@@ -79,13 +99,24 @@ public class IntegratedOpMode extends OpMode {
             shooterGate.open();
         }
         shooterGate.updateLoop();
+
+        if(gamepad1.optionsWasPressed()){
+            drivetrain.resetPinpoint();
+        }
+
+        if(gamepad1.circleWasPressed()){
+            flowerRobber.toggleState();
+        }
+
         ShooterGate.GateStates gateState = shooterGate.getGateState();
 
         // Telemetry
-        telemetry.addData("GateState:" , gateState);
-        telemetry.addData("intake state:", intake.getIntakeState());
-        telemetry.addData("requested vel:", velocityGoal);
-        telemetry.addData("actual vel:", shooter.getMotorVelocity());
+        telemetry.addData("Gate State: " , gateState);
+        telemetry.addData("Intake State: ", intake.getIntakeState());
+        telemetry.addData("Requested Shooter Vel: ", velocityGoal);
+        telemetry.addData("Actual Shooter Vel: ", shooter.getMotorVelocity());
+        telemetry.addData("Heading: ", drivetrain.getPinpointHeading());
+        telemetry.addData("Flower Intake: ", flowerRobber.getState());
         telemetry.update();
     }
 }
