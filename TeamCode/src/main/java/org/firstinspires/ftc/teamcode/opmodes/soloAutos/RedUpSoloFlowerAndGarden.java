@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.soloAutos;
 
 import static com.pedropathing.ivy.Scheduler.schedule;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -15,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.FieldPoints;
 import org.firstinspires.ftc.teamcode.subsystems.FlowerRobber;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
@@ -35,30 +38,34 @@ public class RedUpSoloFlowerAndGarden extends LinearOpMode {
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
 
-    private final Pose start = poseFactory.of(59.1367, 5.2013, 90);
-    private final Pose path1 = poseFactory.of(17.2735, 43.6762, 165);
-    private final Pose path1Control1 = poseFactory.of(47, 36.7475, 0);
-    private final Pose point2Start = poseFactory.of(17.2735, 43.6762, 165);
-    private final Pose point2 = poseFactory.of(40.1292, 109.0805, 190);
-    private final Pose point2Control1 = poseFactory.of(43.4471, 46.1062, 0);
-    private final Pose point2Control2 = poseFactory.of(21.8406, 109.13, 0);
-    private final Pose point3Start = poseFactory.of(40.1292, 109.0805, 190);
-    private final Pose gardenIntake = poseFactory.of(8.4581, 9.8406, -90);
-    private final Pose point3Control1 = poseFactory.of(6.4664, 97.2735, 0);
-    private final Pose point3Control2 = poseFactory.of(33.5034, 31.0067, 0);
-    private final Pose parkPose = poseFactory.of(10.6535, 95.9362, -90);
+    private final Pose start = FieldPoints.StartingPositions.redUp;
+    private final Pose flowerIntake = FieldPoints.FlowerIntakePose.leftFlower;
+    private final Pose startToFlowerControl = poseFactory.of(32.75, 48.54, 0);
+    private final Pose shootingPose = poseFactory.of(34.07, 131.52, 190);
+    private final Pose shootingControl1 = poseFactory.of(43.45, 46.11, 0);
+    private final Pose shootingControl2 = poseFactory.of(20.69, 105.85, 0);
+    private final Pose shootToGarden = shootingPose;
+    private final Pose gardenIntake = FieldPoints.GardenIntakePose.redGarden;
+    private final Pose toGardenControl1 = poseFactory.of(6.4664, 97.2735, 0);
+    private final Pose toGardenControl2 = poseFactory.of(25.36, 37.4, 0);
+    private final Pose gardenWallHugStart = poseFactory.of(8.25, 31, 0);
+    private final Pose gardenWallHugControl = poseFactory.of(5.62, 25.2, 0);
+    private final Pose parkPose = FieldPoints.ParkingZones.redUpPark;
     private final Pose GardenToParkControl1 = poseFactory.of(27.8758, 45.9354, 0);
 
-    public Path startToFlower() {
-        return Paths.curve(start, path1Control1, path1).linear(start, path1);
+    public Path StartToFlower() {
+        return Paths.curve(start, startToFlowerControl, flowerIntake).linear(start, flowerIntake);
     }
 
     public Path FlowerToDown() {
-        return Paths.curve(point2Start, point2Control1, point2Control2, point2).linear(point2Start, point2);
+        return Paths.curve(flowerIntake, shootingControl1, shootingControl2, shootingPose).linear(flowerIntake, shootingPose);
     }
 
     public Path DownToGarden() {
-        return Paths.curve(point3Start, point3Control1, point3Control2, gardenIntake).linear(point3Start, gardenIntake);
+        return Paths.curve(shootToGarden, toGardenControl1, toGardenControl2, gardenWallHugStart).linear(shootToGarden, gardenIntake);
+    }
+    public Path gardenWallHug() {
+        return Paths.curve(gardenWallHugStart, gardenWallHugControl, gardenIntake).constant(gardenIntake);
     }
 
     public Path GardenToPark() {
@@ -71,8 +78,19 @@ public class RedUpSoloFlowerAndGarden extends LinearOpMode {
                 spinUpShooter,
                 spinIntake,
                 runShooterGate,
-                lowerRober,
-                follow(follower, startToFlower())
+                lowerRobber,
+                follow(follower, StartToFlower()),
+                waitMs(2000),
+                parallel(
+                        follow(follower, FlowerToDown()),
+                        sequential(
+                                waitMs(2000),
+                                raiseRobber
+                        )
+                ),
+                runShooterGate,
+                follow(follower, DownToGarden()),
+                follow(follower, gardenWallHug())
         );
     }
 
@@ -136,7 +154,10 @@ public class RedUpSoloFlowerAndGarden extends LinearOpMode {
     Command stopShooter = Command.build()
             .setStart(() -> shooter.setVel(0))
             .setDone(() -> true);
-    Command lowerRober = Command.build()
+    Command lowerRobber = Command.build()
             .setStart(() -> flowerRobber.setDOWN())
+            .setDone(() -> true);
+    Command raiseRobber = Command.build()
+            .setStart(() -> flowerRobber.setUP())
             .setDone(() -> true);
 }
