@@ -18,11 +18,11 @@ public class FieldPoints {
     }
     public static class HivePositions {
         public static final double spaceFromCenterToGoalsX = 25.5 / 2; // space between hives / 2
-        public final double spaceFromCenterToGoalsY = Math.cos(30) * 15.44;
-        public final Pose redUp = poseFactory.of((72 - spaceFromCenterToGoalsX), (72 - spaceFromCenterToGoalsY),0);
-        public final Pose redDown = poseFactory.of((72 - spaceFromCenterToGoalsX), (72 + spaceFromCenterToGoalsY),0);
-        public final Pose blueUp = poseFactory.of((72 + spaceFromCenterToGoalsX), (72 - spaceFromCenterToGoalsY),0);
-        public final Pose blueDown = poseFactory.of((72 + spaceFromCenterToGoalsX), (72 + spaceFromCenterToGoalsY),0);
+        public static final double spaceFromCenterToGoalsY = Math.cos(Math.toRadians(30)) * 15.44;
+        public static final Pose redUp = poseFactory.of((72 - spaceFromCenterToGoalsX), (72 - spaceFromCenterToGoalsY),0);
+        public static final Pose redDown = poseFactory.of((72 - spaceFromCenterToGoalsX), (72 + spaceFromCenterToGoalsY),0);
+        public static final Pose blueUp = poseFactory.of((72 + spaceFromCenterToGoalsX), (72 - spaceFromCenterToGoalsY),0);
+        public static final Pose blueDown = poseFactory.of((72 + spaceFromCenterToGoalsX), (72 + spaceFromCenterToGoalsY),0);
     }
 
     public static class StartingPositions {
