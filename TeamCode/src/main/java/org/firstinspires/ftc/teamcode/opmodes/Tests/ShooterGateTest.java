@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.opmodes.subsystemtests;
+package org.firstinspires.ftc.teamcode.opmodes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystems.ShooterGate;
 
