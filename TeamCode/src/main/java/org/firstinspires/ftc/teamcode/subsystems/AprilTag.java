@@ -63,17 +63,9 @@ public class AprilTag {
         final int RES_WIDTH = 1280;
         final int RES_HEIGHT = 720;
 
-        // Horizontal field of view of the lens at this resolution, before zoom.
-        // ELP lists the H120 lens at roughly 120-126°. Only used if no measured calibration.
-        final double LENS_HFOV_DEG = 120.0;
 
-        // Digital zoom. The ELP USBGS1200P01 does NOT support UVC zoom, so this stays at 1.0.
-        // Leaving it above 1.0 would scale fx/fy for a zoom that isn't happening and make
-        // every reported distance too large. For a tighter view, use a narrower lens instead.
-        // (If you ever use a camera that does support zoom: ZOOM_FACTOR is the real
-        // magnification, CAMERA_ZOOM_VALUE is the raw UVC number, and they are not the same unit.)
-        final double ZOOM_FACTOR = 1.0;
-        final int CAMERA_ZOOM_VALUE = 250;
+
+
 
         // ==================== MEASURED CALIBRATION ======================
         // Once you calibrate (3DF Zephyr, with the zoom applied, at RES_WIDTH x RES_HEIGHT),
@@ -94,10 +86,8 @@ public class AprilTag {
         // DEFAULT is used while searching (no tag seen). Decimation 1 is only used when a tag
         // is genuinely far away, since running it on every frame is what dropped FPS to ~8.
         final int DECIMATION_DEFAULT = 2;
-        final int DECIMATION_FAR = 1;
-        final int DECIMATION_NEAR = 3;
-        final double NEAR_RANGE_THRESHOLD_IN = 36.0;
-        final double FAR_RANGE_THRESHOLD_IN = 72.0;
+
+
 
         // RC LiveView preview costs CPU. Off by default for speed; set true when you want
         // to watch the image while tuning exposure/gain.
@@ -110,20 +100,10 @@ public class AprilTag {
 
         int exposureMs = START_EXPOSURE_MS;
         int gain = START_GAIN;
-        int minExposureMs = 1;
-        int maxExposureMs = 100;
-        int minGain = 0;
-        int maxGain = 255;
+
 
         int currentDecimation = DECIMATION_DEFAULT;
-        boolean zoomApplied = false;
-        String zoomStatus = "not attempted";
 
-        // For edge detection on gamepad buttons
-        boolean lastLB;
-        boolean lastRB;
-        boolean lastLT;
-        boolean lastRT;
 
         //April tags init
         double fx, fy, cx, cy;
@@ -159,15 +139,12 @@ public class AprilTag {
     }
 
     public void useCamOff() {
-        telemetry.update();
-
         // Save CPU resources; can resume streaming when needed.
         visionPortal.stopStreaming();
     }
 
     public void useCamOn() {
         telemetry.update();
-
         // Save CPU resources; can resume streaming when needed.
         visionPortal.resumeStreaming();
     }
