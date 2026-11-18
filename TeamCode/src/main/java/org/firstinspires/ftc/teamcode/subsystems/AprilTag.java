@@ -231,6 +231,7 @@ public class AprilTag {
         return hiveState;
     }
 
+
     public Hive AprilTagBlueAudience() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
