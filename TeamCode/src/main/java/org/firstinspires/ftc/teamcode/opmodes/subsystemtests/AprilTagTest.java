@@ -25,6 +25,7 @@ public class AprilTagTest extends OpMode {
         if (gamepad1.circleWasPressed()){
             apriltagSub.useCamOff();
         }
-        apriltagSub.TeamSetRun();
+        apriltagSub.AprilTagBlueAudience();
+        telemetry.addData("hive" ,apriltagSub.hiveState);
     }
 }
