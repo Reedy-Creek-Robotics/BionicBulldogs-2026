@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.FieldPoints.GeneralConstants.tileSize;
-import static org.firstinspires.ftc.teamcode.pedroPathing.FieldPoints.HivePositions.spaceFromCenterToGoalsX;
 import static org.firstinspires.ftc.teamcode.robot.BotDimensions.botXSize;
 import static org.firstinspires.ftc.teamcode.robot.BotDimensions.botYSize;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.BotDimensions;
 
 public class FieldPoints {
@@ -41,7 +39,9 @@ public class FieldPoints {
     }
 
     public static class FlowerIntakePose {
-        public static final Pose leftFlower = poseFactory.of((botYSize + 2.25), tileSize * 2, 180);
+        private static final double offset = 1;
+        public static final Pose leftFlower = poseFactory.of((botYSize + offset), tileSize * 2, 180);
+        public static final Pose scoringFlower = poseFactory.of(tileSize * 2, 144 - (botYSize / 2) - offset, 90);
     }
 
     public static class GardenIntakePose {

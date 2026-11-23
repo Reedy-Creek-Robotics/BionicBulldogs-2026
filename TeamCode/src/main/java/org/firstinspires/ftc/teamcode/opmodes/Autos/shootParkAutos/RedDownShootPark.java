@@ -24,6 +24,7 @@ public class RedDownShootPark extends GeneralShootParkAuto {
     private final Pose parkZone = poseFactory.of(11.5755, 121.3112, -90);
     private final Pose parkControl1 = poseFactory.of(61.0076, 119.3683, 0);
 
+
     // Autonomous routine
     public Command autoRoutine() {
         return sequential(

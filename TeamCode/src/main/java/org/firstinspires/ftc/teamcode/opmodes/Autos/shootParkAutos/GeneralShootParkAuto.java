@@ -25,24 +25,24 @@ public abstract class GeneralShootParkAuto extends LinearOpMode {
     public static final int acceptableShooterVelocityError = 50;
 
     public final PoseFactory poseFactory = PoseFactory.degrees();
-    Command spinIntake = Command.build()
+    public Command spinIntake = Command.build()
             .setExecute(() -> intake.setFORWARD())
             .setDone(() -> intake.getIntakeState() == Intake.IntakeStates.FORWARD);
 
-    Command stopIntake = Command.build()
+    public Command stopIntake = Command.build()
             .setExecute(() -> intake.setSTOP())
             .setDone(() -> intake.getIntakeState() == Intake.IntakeStates.STOP);
 
-    Command runShooterGate = Command.build()
+    public Command runShooterGate = Command.build()
             .setStart(() -> shooterGate.open())
             .setExecute(() -> shooterGate.updateLoop())
             .setDone(() -> shooterGate.getGateState() == ShooterGate.GateStates.inactive);
 
-    Command spinUpShooter = Command.build()
+    public Command spinUpShooter = Command.build()
             .setStart(() -> shooter.setVel(shooterVelocityGoal))
             .setDone(() -> Math.abs(shooter.getMotorVelocity() - shooterVelocityGoal) < acceptableShooterVelocityError);
 
-    Command stopShooter = Command.build()
+    public Command stopShooter = Command.build()
             .setStart(() -> shooter.setVel(0))
             .setDone(() -> true);
 
