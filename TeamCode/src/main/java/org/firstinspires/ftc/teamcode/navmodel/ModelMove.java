@@ -18,6 +18,7 @@ import java.util.function.BooleanSupplier;
 public class ModelMove {
     public static final long SLOW_LOOP_NS = 100_000_000L;
     public static final int MAX_VIA = 8;
+    public static final int MAX_AT = 24;
     public static final double DEFAULT_VIA_RADIUS = 10.0;
     public static final double MIN_VIA_RADIUS = ModelDrive.POS_TOL;
     public static final double HOLD_POS_TOL = 3.0, HOLD_HEAD_TOL = 0.15;
@@ -36,15 +37,17 @@ public class ModelMove {
     private int tick, slowLoops;
     private boolean powered, poseOk;
     private double x, y, h, vx, vy, w, vbat = 12.0;
-
-    private final double[] qx = new double[MAX_VIA], qy = new double[MAX_VIA], qr = new double[MAX_VIA];
+    private final double[] qx = new double[MAX_VIA], qy = new double[MAX_VIA], qr = new double[MAX_VIA], qh = new double[MAX_VIA];
     private int queued;
     private String queueError;
-
+    private final double[] qaf = new double[MAX_AT], af = new double[MAX_AT];
+    private final Runnable[] qar = new Runnable[MAX_AT], ar = new Runnable[MAX_AT];
+    private final boolean[] aran = new boolean[MAX_AT];
+    private int queuedActs, acts;
+    private double pathLen = Double.NaN, progress = Double.NaN;
     private final double[] lx = new double[MAX_VIA + 1], ly = new double[MAX_VIA + 1], lr = new double[MAX_VIA];
+    private final double[] lh = new double[MAX_VIA + 1];
     private int legs, leg;
-    private double legHeading;
-
     private boolean holding, held;
     private long holdEndNs;
     private double hx, hy, hh;
@@ -83,7 +86,9 @@ public class ModelMove {
 
     public ModelMove via(double x, double y) { return via(x, y, DEFAULT_VIA_RADIUS); }
 
-    public ModelMove via(double x, double y, double radius) {
+    public ModelMove via(double x, double y, double radius) { return via(x, y, radius, Double.NaN); }
+
+    public ModelMove via(double x, double y, double radius, double headingDeg) {
         if (queueError != null) return this;
         if (queued >= MAX_VIA) queueError = "more than " + MAX_VIA + " intermediate points";
         else if (!(Double.isFinite(x) && Double.isFinite(y) && Double.isFinite(radius)))
@@ -91,7 +96,19 @@ public class ModelMove {
         else {
             qx[queued] = x;
             qy[queued] = y;
+            qh[queued] = Double.isNaN(headingDeg) ? Double.NaN : Math.toRadians(headingDeg);
             qr[queued++] = Math.max(MIN_VIA_RADIUS, radius);
+        }
+        return this;
+    }
+
+    public ModelMove at(double fraction, Runnable action) {
+        if (queueError != null) return this;
+        if (queuedActs >= MAX_AT) queueError = "more than " + MAX_AT + " actions";
+        else if (action == null || !Double.isFinite(fraction)) queueError = "action " + (queuedActs + 1) + ": none, or not a number";
+        else {
+            qaf[queuedActs] = Math.max(0.0, Math.min(1.0, fraction));
+            qar[queuedActs++] = action;
         }
         return this;
     }
@@ -109,6 +126,8 @@ public class ModelMove {
         legs = leg = 0;
         queued = 0;
         queueError = null;
+        dropActions();
+        queuedActs = 0;
         if (drive.busy()) drive.stop();
         readPose();
         ModelDrive.Status s = drive.status();
@@ -147,6 +166,17 @@ public class ModelMove {
         queued = 0;
         queueError = null;
         legs = leg = 0;
+        dropActions();
+        acts = err == null ? queuedActs : 0;
+        for (int i = 0; i < acts; i++) {
+            af[i] = qaf[i];
+            ar[i] = qar[i];
+            aran[i] = false;
+        }
+        queuedActs = 0;
+        pathLen = Double.NaN;
+        lx[0] = x;
+        ly[0] = y;
         if (err != null) {
             drive.goTo(Double.NaN, Double.NaN, Double.NaN);
             return started(was, false, err);
@@ -161,9 +191,10 @@ public class ModelMove {
         }
         for (int i = 0; i <= n; i++) {
             double px = i < n ? qx[i] : x, py = i < n ? qy[i] : y;
-            String why = drive.unreachableReason(px, py, heading);
+            double ph = i < n && !Double.isNaN(qh[i]) ? qh[i] : heading;
+            String why = drive.unreachableReason(px, py, ph);
             if (why != null) {
-                drive.goTo(px, py, heading);
+                drive.goTo(px, py, ph);
                 return started(was, false, i < n ? "intermediate point " + (i + 1) + ": " + why : why);
             }
         }
@@ -171,16 +202,18 @@ public class ModelMove {
             lx[i] = qx[i];
             ly[i] = qy[i];
             lr[i] = qr[i];
+            lh[i] = Double.isNaN(qh[i]) ? heading : qh[i];
         }
         lx[n] = x;
         ly[n] = y;
+        lh[n] = heading;
         legs = n;
-        legHeading = heading;
-        return started(was, drive.goTo(lx[0], ly[0], heading), null);
+        return started(was, drive.goTo(lx[0], ly[0], lh[0]), null);
     }
 
     private boolean started(boolean wasBusy, boolean ok, String reason) {
         refused = reason;
+        if (!ok) dropActions();
         if (!wasBusy) {
             nextTickNs = 0;
             lastTickNs = 0;
@@ -235,12 +268,14 @@ public class ModelMove {
         }
         if (leg < legs && poseOk && Math.hypot(x - lx[leg], y - ly[leg]) < lr[leg]) {
             leg++;
-            drive.goTo(lx[leg], ly[leg], legHeading);
+            drive.goTo(lx[leg], ly[leg], lh[leg]);
         }
+        if (acts > 0 && poseOk) runActions(measureProgress());
         double nan = Double.NaN;
         double[] c = poseOk ? drive.update(x, y, h, vx, vy, w) : drive.update(nan, nan, nan, nan, nan, nan);
         if (!drive.busy()) {
             brake();
+            runActions(Double.POSITIVE_INFINITY);
             return holding;
         }
         ModelDrive.wheelPowers(c, vbat, wheels);
@@ -272,6 +307,7 @@ public class ModelMove {
         holding = false;
         drive.stop();
         legs = leg = 0;
+        dropActions();
         powered = true;
         brake();
     }
@@ -322,6 +358,8 @@ public class ModelMove {
 
     public int slowLoops() { return slowLoops; }
 
+    public double progress() { return progress; }
+
     public void addTelemetry() {
         Telemetry t = opMode.telemetry;
         ModelDrive.Status s = drive.status();
@@ -335,6 +373,29 @@ public class ModelMove {
         t.addData("Pose", "(%.1f, %.1f) %.0f deg%s", x, y, Math.toDegrees(h), poseOk ? "" : "  PINPOINT NOT READY");
         t.addData("To go", "%.1f in, %.1f deg", drive.distanceToGoal(), Math.toDegrees(drive.headingErrorToGoal()));
         t.addData("Alliance / battery / slow loops", "%s / %.2f V / %d", drive.isBlue() ? "BLUE" : "RED", vbat, slowLoops);
+    }
+
+    private double measureProgress() {
+        double rest = Math.hypot(lx[leg] - x, ly[leg] - y);
+        for (int i = leg; i < legs; i++) rest += Math.hypot(lx[i + 1] - lx[i], ly[i + 1] - ly[i]);
+        if (Double.isNaN(pathLen)) pathLen = rest;
+        progress = pathLen > 1e-6 ? 1.0 - rest / pathLen : 1.0;
+        return progress;
+    }
+
+    private void runActions(double p) {
+        for (int i = 0; i < acts; i++) {
+            if (!aran[i] && af[i] <= p) {
+                aran[i] = true;
+                ar[i].run();
+            }
+        }
+    }
+
+    private void dropActions() {
+        for (int i = 0; i < acts; i++) ar[i] = null;
+        acts = 0;
+        progress = Double.NaN;
     }
 
     private boolean running() { return holding || drive.busy(); }

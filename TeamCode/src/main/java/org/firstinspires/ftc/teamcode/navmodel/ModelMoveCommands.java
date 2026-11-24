@@ -9,21 +9,33 @@ public final class ModelMoveCommands {
     private ModelMoveCommands() {
     }
 
-    public static final class Via {
-        final double x, y, radius;
+    public interface MoveExtra {
+        void queue(ModelMove move);
+    }
 
-        private Via(double x, double y, double radius) {
+    public static final class Via implements MoveExtra {
+        final double x, y, radius, headingDeg;
+
+        private Via(double x, double y, double radius, double headingDeg) {
             this.x = x;
             this.y = y;
             this.radius = radius;
+            this.headingDeg = headingDeg;
         }
+
+        @Override
+        public void queue(ModelMove move) { move.via(x, y, radius, headingDeg); }
     }
 
-    public static Via via(double x, double y) { return new Via(x, y, ModelMove.DEFAULT_VIA_RADIUS); }
+    public static MoveExtra at(double fraction, Runnable action) { return move -> move.at(fraction, action); }
 
-    public static Via via(double x, double y, double radius) { return new Via(x, y, radius); }
+    public static Via via(double x, double y) { return new Via(x, y, ModelMove.DEFAULT_VIA_RADIUS, Double.NaN); }
 
-    public static CommandBuilder driveTo(ModelMove move, double x, double y, double headingDeg, Via... vias) {
+    public static Via via(double x, double y, double radius) { return new Via(x, y, radius, Double.NaN); }
+
+    public static Via via(double x, double y, double radius, double headingDeg) { return new Via(x, y, radius, headingDeg); }
+
+    public static CommandBuilder driveTo(ModelMove move, double x, double y, double headingDeg, MoveExtra... vias) {
         return command(move, () -> {
             queue(move, vias);
             move.goTo(x, y, headingDeg);
@@ -34,7 +46,7 @@ public final class ModelMoveCommands {
         return command(move, () -> move.goTo(x, y));
     }
 
-    public static CommandBuilder driveTo(ModelMove move, double x, double y, Via first, Via... more) {
+    public static CommandBuilder driveTo(ModelMove move, double x, double y, MoveExtra first, MoveExtra... more) {
         return command(move, () -> {
             queue(move, first);
             queue(move, more);
@@ -50,8 +62,8 @@ public final class ModelMoveCommands {
         return new CommandBuilder().setStart(action).setDone(() -> true);
     }
 
-    private static void queue(ModelMove move, Via... vias) {
-        for (Via v : vias) move.via(v.x, v.y, v.radius);
+    private static void queue(ModelMove move, MoveExtra... vias) {
+        for (MoveExtra v : vias) v.queue(move);
     }
 
     private static CommandBuilder command(ModelMove move, Runnable start) {
