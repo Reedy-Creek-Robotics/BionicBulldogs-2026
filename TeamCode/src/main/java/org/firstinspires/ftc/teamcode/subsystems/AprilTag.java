@@ -149,6 +149,23 @@ public class AprilTag {
         visionPortal.resumeStreaming();
     }
 
+    public void hiveGoal(double y ){
+        if (team == team.RED){
+            if (y >= 70.75){
+                AprilTagRedScoring();
+            }else{
+                AprilTagRedAudience();
+            }
+        }else{
+            if (y >= 70.75){
+                AprilTagBlueScoring();
+            }else{
+                AprilTagBlueAudience();
+            }
+        }
+    }
+
+
 
     public Hive AprilTagRedAudience() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();

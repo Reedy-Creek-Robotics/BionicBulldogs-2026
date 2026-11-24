@@ -9,11 +9,12 @@ import org.firstinspires.ftc.teamcode.subsystems.AprilTag;
 public class AprilTagTest extends OpMode {
     AprilTag apriltagSub = new AprilTag();
     AprilTag.Hive hiveState = AprilTag.Hive.None;
+    double y = 70.75;
 
 
     @Override
     public void init() {
-        apriltagSub.init(AprilTag.Teams.RED, hardwareMap, telemetry);
+        apriltagSub.init(AprilTag.Teams.BLUE, hardwareMap, telemetry);
     }
 
 
@@ -21,12 +22,14 @@ public class AprilTagTest extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.crossWasPressed()){
-            apriltagSub.useCamOn();
+            y = 70.75;
         }
-        if (gamepad1.circleWasPressed()){
-            apriltagSub.useCamOff();
+        if (gamepad1.triangleWasPressed()){
+            y = 50.50;
         }
-        apriltagSub.AprilTagBlueAudience();
+        telemetry.addData("y",y);
+        apriltagSub.hiveGoal(y);
         telemetry.addData("hive" ,apriltagSub.hiveState);
+        telemetry.update();
     }
 }
